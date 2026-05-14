@@ -1,8 +1,9 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import pandas as pd
 
 # =========================================================
-# PAGE CONFIG
+# CONFIG
 # =========================================================
 
 st.set_page_config(
@@ -12,91 +13,79 @@ st.set_page_config(
 )
 
 # =========================================================
-# CSS
+# CSS SIMPLE & STABLE
 # =========================================================
 
 st.markdown("""
 <style>
 
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-}
-
+/* BACKGROUND */
 .stApp {
-    background: #0f172a;
-    color: white;
+    background: #0b1120;
 }
 
 /* SIDEBAR */
-
 section[data-testid="stSidebar"] {
     background: #111827;
     border-right: 1px solid #1f2937;
 }
 
-section[data-testid="stSidebar"] * {
-    color: white !important;
+/* TEXT */
+html, body, [class*="css"] {
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* CARD */
+/* METRIC */
+[data-testid="metric-container"] {
+    background: linear-gradient(
+        135deg,
+        #111827,
+        #1e293b
+    );
 
-.custom-card {
-
-    background: rgba(255,255,255,0.04);
-
-    border: 1px solid rgba(255,255,255,0.08);
-
-    border-radius: 24px;
+    border: 1px solid #374151;
 
     padding: 20px;
 
-    box-shadow:
-        0 0 20px rgba(0,0,0,0.25);
-}
-
-/* GLOW */
-
-.glow {
+    border-radius: 22px;
 
     box-shadow:
-        0 0 25px rgba(99,102,241,0.35);
+        0 0 20px rgba(59,130,246,0.15);
 }
 
-/* TITLE */
-
-.big-title {
-
-    font-size: 54px !important;
-
-    font-weight: 800 !important;
-
-    color: white !important;
-}
-
-/* TEXT */
-
-.white-text {
-
-    color: white !important;
-}
-
-.green {
-
-    color: #22c55e !important;
-}
-
-.red {
-
-    color: #ef4444 !important;
-}
-
-/* TABLE */
-
+/* DATAFRAME */
 [data-testid="stDataFrame"] {
-
-    background: rgba(255,255,255,0.04);
-
     border-radius: 20px;
+    overflow: hidden;
+}
+
+/* BUTTON */
+.stButton>button {
+
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #4f46e5
+    );
+
+    color: white;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 10px 20px;
+
+    font-weight: bold;
+}
+
+/* SELECTBOX */
+.stSelectbox div[data-baseweb="select"] {
+
+    background: #1e293b;
+
+    border-radius: 12px;
 }
 
 </style>
@@ -116,8 +105,8 @@ stock = st.sidebar.selectbox(
         "BMRI",
         "TLKM",
         "ASII",
-        "GOTO",
-        "ANTM"
+        "ANTM",
+        "GOTO"
     ]
 )
 
@@ -127,23 +116,22 @@ timeframe = st.sidebar.selectbox(
         "1D",
         "1W",
         "1M",
-        "3M"
+        "3M",
+        "1Y"
     ]
 )
+
+st.sidebar.write("")
+
+st.sidebar.success("🟢 MARKET OPEN")
 
 # =========================================================
 # HEADER
 # =========================================================
 
-st.markdown(
-    '<p class="big-title">RENNO STOCK TERMINAL</p>',
-    unsafe_allow_html=True
-)
+st.title("RENNO STOCK TERMINAL")
 
-st.markdown(
-    '<p style="color:#94a3b8;">Premium AI Powered IDX Dashboard</p>',
-    unsafe_allow_html=True
-)
+st.caption("Premium AI Powered IDX Dashboard")
 
 st.success("🟢 LIVE MARKET ACTIVE")
 
@@ -157,65 +145,47 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
 
-    st.markdown('<div class="custom-card glow">', unsafe_allow_html=True)
-
     st.metric(
         label="Stock",
         value=stock
     )
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
 with col2:
-
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
 
     st.metric(
         label="Price",
         value="9,250"
     )
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
 with col3:
-
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
 
     st.metric(
         label="Change",
         value="+2.41%"
     )
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
 with col4:
-
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
 
     st.metric(
         label="Trend",
         value="Bullish"
     )
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
 # =========================================================
-# MAIN GRID
+# MAIN LAYOUT
 # =========================================================
 
 left, right = st.columns([2.3, 1])
 
 # =========================================================
-# LEFT
+# LEFT SIDE
 # =========================================================
 
 with left:
 
-    st.markdown('<div class="custom-card glow">', unsafe_allow_html=True)
-
     st.subheader("📈 TradingView Chart")
 
-    tv_chart = f'''
+    tradingview_chart = f"""
     <div class="tradingview-widget-container">
 
       <div id="tradingview_chart"></div>
@@ -243,7 +213,7 @@ with left:
 
         "locale": "id",
 
-        "toolbar_bg": "#0f172a",
+        "toolbar_bg": "#0b1120",
 
         "enable_publishing": false,
 
@@ -256,48 +226,44 @@ with left:
       </script>
 
     </div>
-    '''
+    """
 
-    components.html(tv_chart, height=650)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+    components.html(
+        tradingview_chart,
+        height=650
+    )
 
     st.write("")
 
-    st.markdown('<div class="custom-card glow">', unsafe_allow_html=True)
-
     st.subheader("🤖 AI SIGNAL")
 
-    st.markdown(
-        '<h1 class="green">🚀 STRONG BUY</h1>',
-        unsafe_allow_html=True
-    )
+    signal_col1, signal_col2 = st.columns(2)
 
-    st.markdown(
-        '<p class="white-text">AI SCORE : 8/10</p>',
-        unsafe_allow_html=True
-    )
+    with signal_col1:
 
-    st.markdown(
-        '<p style="color:#94a3b8;">MACD Bullish • RSI Healthy • Volume Surge</p>',
-        unsafe_allow_html=True
-    )
+        st.metric(
+            label="AI SCORE",
+            value="8/10"
+        )
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    with signal_col2:
+
+        st.metric(
+            label="Signal",
+            value="🚀 STRONG BUY"
+        )
 
 # =========================================================
-# RIGHT
+# RIGHT SIDE
 # =========================================================
 
 with right:
 
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-
     st.subheader("🔥 Watchlist")
 
-    watchlist = {
+    watchlist_df = pd.DataFrame({
+
         "Stock": [
-            "BBCA",
             "BBRI",
             "BMRI",
             "TLKM",
@@ -306,25 +272,21 @@ with right:
         ],
 
         "Change": [
-            "+2.41%",
-            "+1.22%",
+            "+1.21%",
             "+3.11%",
             "-0.51%",
             "+5.22%",
             "+7.11%"
         ]
-    }
+
+    })
 
     st.dataframe(
-        watchlist,
+        watchlist_df,
         use_container_width=True
     )
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
     st.write("")
-
-    st.markdown('<div class="custom-card glow">', unsafe_allow_html=True)
 
     st.subheader("📊 Market Status")
 
@@ -334,45 +296,38 @@ with right:
         delta="+1.22%"
     )
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
 # =========================================================
-# MARKET OVERVIEW
+# MARKET SCANNER
 # =========================================================
 
 st.write("")
 
-st.markdown('<div class="custom-card glow">', unsafe_allow_html=True)
+st.subheader("📋 Market Scanner")
 
-st.subheader("📋 Market Overview")
-
-market_data = {
+scanner_df = pd.DataFrame({
 
     "Stock": [
         "BBCA",
-        "BBRI",
         "BMRI",
+        "BBRI",
         "TLKM",
-        "ASII",
-        "GOTO"
+        "ANTM"
     ],
 
     "Price": [
         9250,
-        4850,
         6450,
+        4850,
         3200,
-        5150,
-        89
+        1620
     ],
 
     "Change": [
         "+2.41%",
-        "+1.22%",
         "+3.11%",
+        "+1.21%",
         "-0.51%",
-        "+0.82%",
-        "+7.11%"
+        "+5.22%"
     ],
 
     "Trend": [
@@ -380,14 +335,20 @@ market_data = {
         "Bullish",
         "Bullish",
         "Bearish",
-        "Bullish",
         "Bullish"
+    ],
+
+    "Volume": [
+        "12.45M",
+        "15.21M",
+        "18.32M",
+        "25.11M",
+        "22.17M"
     ]
-}
+
+})
 
 st.dataframe(
-    market_data,
+    scanner_df,
     use_container_width=True
 )
-
-st.markdown('</div>', unsafe_allow_html=True)
