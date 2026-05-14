@@ -1,9 +1,10 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
+from streamlit_option_menu import option_menu
 
 # =========================================================
-# CONFIG
+# PAGE CONFIG
 # =========================================================
 
 st.set_page_config(
@@ -13,31 +14,27 @@ st.set_page_config(
 )
 
 # =========================================================
-# CSS SIMPLE & STABLE
+# CUSTOM CSS
 # =========================================================
 
 st.markdown("""
 <style>
 
-/* BACKGROUND */
+/* MAIN BACKGROUND */
 .stApp {
-    background: #0b1120;
+    background-color: #0b1120;
+    color: white;
 }
 
 /* SIDEBAR */
 section[data-testid="stSidebar"] {
-    background: #111827;
+    background-color: #111827;
     border-right: 1px solid #1f2937;
 }
 
-/* TEXT */
-html, body, [class*="css"] {
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-/* METRIC */
+/* METRIC CARD */
 [data-testid="metric-container"] {
+
     background: linear-gradient(
         135deg,
         #111827,
@@ -46,46 +43,49 @@ html, body, [class*="css"] {
 
     border: 1px solid #374151;
 
-    padding: 20px;
+    padding: 18px;
 
-    border-radius: 22px;
+    border-radius: 20px;
 
     box-shadow:
-        0 0 20px rgba(59,130,246,0.15);
+        0 0 15px rgba(59,130,246,0.15);
 }
 
 /* DATAFRAME */
 [data-testid="stDataFrame"] {
-    border-radius: 20px;
+    border-radius: 18px;
     overflow: hidden;
 }
 
-/* BUTTON */
-.stButton>button {
+/* TITLE */
+.big-title {
 
-    background: linear-gradient(
-        135deg,
-        #7c3aed,
-        #4f46e5
-    );
+    font-size: 50px;
+
+    font-weight: 800;
 
     color: white;
+}
 
-    border: none;
+/* SUBTITLE */
+.sub-title {
 
-    border-radius: 12px;
+    color: #9ca3af;
 
-    padding: 10px 20px;
+    font-size: 18px;
+}
+
+/* GLOW */
+.glow {
+
+    color: #8b5cf6;
 
     font-weight: bold;
 }
 
-/* SELECTBOX */
-.stSelectbox div[data-baseweb="select"] {
-
-    background: #1e293b;
-
-    border-radius: 12px;
+/* REMOVE TOP SPACE */
+.block-container {
+    padding-top: 1rem;
 }
 
 </style>
@@ -95,260 +95,290 @@ html, body, [class*="css"] {
 # SIDEBAR
 # =========================================================
 
-st.sidebar.title("🚀 RENNO TERMINAL")
+with st.sidebar:
 
-stock = st.sidebar.selectbox(
-    "Select Stock",
-    [
-        "BBCA",
-        "BBRI",
-        "BMRI",
-        "TLKM",
-        "ASII",
-        "ANTM",
-        "GOTO"
-    ]
-)
+    st.markdown("# 🚀 RENNO TERMINAL")
 
-timeframe = st.sidebar.selectbox(
-    "Select Timeframe",
-    [
-        "1D",
-        "1W",
-        "1M",
-        "3M",
-        "1Y"
-    ]
-)
+    selected = option_menu(
 
-st.sidebar.write("")
+        menu_title="MENU",
 
-st.sidebar.success("🟢 MARKET OPEN")
-
-# =========================================================
-# HEADER
-# =========================================================
-
-st.title("RENNO STOCK TERMINAL")
-
-st.caption("Premium AI Powered IDX Dashboard")
-
-st.success("🟢 LIVE MARKET ACTIVE")
-
-st.write("")
-
-# =========================================================
-# METRICS
-# =========================================================
-
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-
-    st.metric(
-        label="Stock",
-        value=stock
-    )
-
-with col2:
-
-    st.metric(
-        label="Price",
-        value="9,250"
-    )
-
-with col3:
-
-    st.metric(
-        label="Change",
-        value="+2.41%"
-    )
-
-with col4:
-
-    st.metric(
-        label="Trend",
-        value="Bullish"
-    )
-
-# =========================================================
-# MAIN LAYOUT
-# =========================================================
-
-left, right = st.columns([2.3, 1])
-
-# =========================================================
-# LEFT SIDE
-# =========================================================
-
-with left:
-
-    st.subheader("📈 TradingView Chart")
-
-    tradingview_chart = f"""
-    <div class="tradingview-widget-container">
-
-      <div id="tradingview_chart"></div>
-
-      <script type="text/javascript"
-      src="https://s3.tradingview.com/tv.js">
-      </script>
-
-      <script type="text/javascript">
-
-      new TradingView.widget({{
-
-        "width": "100%",
-        "height": 650,
-
-        "symbol": "IDX:{stock}",
-
-        "interval": "D",
-
-        "timezone": "Asia/Jakarta",
-
-        "theme": "dark",
-
-        "style": "1",
-
-        "locale": "id",
-
-        "toolbar_bg": "#0b1120",
-
-        "enable_publishing": false,
-
-        "allow_symbol_change": true,
-
-        "container_id": "tradingview_chart"
-
-      }});
-
-      </script>
-
-    </div>
-    """
-
-    components.html(
-        tradingview_chart,
-        height=650
-    )
-
-    st.write("")
-
-    st.subheader("🤖 AI SIGNAL")
-
-    signal_col1, signal_col2 = st.columns(2)
-
-    with signal_col1:
-
-        st.metric(
-            label="AI SCORE",
-            value="8/10"
-        )
-
-    with signal_col2:
-
-        st.metric(
-            label="Signal",
-            value="🚀 STRONG BUY"
-        )
-
-# =========================================================
-# RIGHT SIDE
-# =========================================================
-
-with right:
-
-    st.subheader("🔥 Watchlist")
-
-    watchlist_df = pd.DataFrame({
-
-        "Stock": [
-            "BBRI",
-            "BMRI",
-            "TLKM",
-            "ANTM",
-            "GOTO"
+        options=[
+            "Dashboard",
+            "Market Scanner",
+            "Watchlist",
+            "AI Signal",
+            "News",
+            "Portfolio",
+            "Settings"
         ],
 
-        "Change": [
-            "+1.21%",
-            "+3.11%",
-            "-0.51%",
-            "+5.22%",
-            "+7.11%"
-        ]
+        icons=[
+            "house",
+            "bar-chart",
+            "star",
+            "robot",
+            "newspaper",
+            "briefcase",
+            "gear"
+        ],
 
-    })
+        menu_icon="rocket",
 
-    st.dataframe(
-        watchlist_df,
-        use_container_width=True
+        default_index=0,
+
+        styles={
+
+            "container": {
+                "padding": "0!important",
+                "background-color": "#111827",
+            },
+
+            "icon": {
+                "color": "#8b5cf6",
+                "font-size": "18px"
+            },
+
+            "nav-link": {
+
+                "font-size": "16px",
+
+                "text-align": "left",
+
+                "margin": "8px",
+
+                "--hover-color": "#1e293b",
+
+                "border-radius": "12px",
+
+                "color": "white",
+            },
+
+            "nav-link-selected": {
+
+                "background":
+                "linear-gradient(135deg,#7c3aed,#4f46e5)",
+
+                "font-weight": "bold",
+            },
+        }
     )
+
+# =========================================================
+# DASHBOARD
+# =========================================================
+
+if selected == "Dashboard":
+
+    # HEADER
+
+    st.markdown(
+        '<div class="big-title">RENNO STOCK <span class="glow">TERMINAL</span></div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="sub-title">Premium AI Powered IDX Dashboard</div>',
+        unsafe_allow_html=True
+    )
+
+    st.success("🟢 LIVE MARKET ACTIVE")
 
     st.write("")
 
-    st.subheader("📊 Market Status")
+    # METRICS
 
-    st.metric(
-        label="IHSG",
-        value="7,102",
-        delta="+1.22%"
-    )
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric("STOCK", "BBCA")
+
+    with col2:
+        st.metric("PRICE", "9,250")
+
+    with col3:
+        st.metric("CHANGE", "+2.41%")
+
+    with col4:
+        st.metric("TREND", "Bullish")
+
+    st.write("")
+
+    # MAIN SECTION
+
+    left, right = st.columns([2.2, 1])
+
+    # LEFT
+
+    with left:
+
+        st.subheader("📈 TradingView Chart")
+
+        tradingview_chart = """
+        <div class="tradingview-widget-container">
+          <div id="tradingview_chart"></div>
+
+          <script type="text/javascript"
+          src="https://s3.tradingview.com/tv.js">
+          </script>
+
+          <script type="text/javascript">
+
+          new TradingView.widget({
+
+            "width": "100%",
+            "height": 600,
+
+            "symbol": "IDX:BBCA",
+
+            "interval": "D",
+
+            "timezone": "Asia/Jakarta",
+
+            "theme": "dark",
+
+            "style": "1",
+
+            "locale": "id",
+
+            "toolbar_bg": "#0b1120",
+
+            "enable_publishing": false,
+
+            "allow_symbol_change": true,
+
+            "container_id": "tradingview_chart"
+
+          });
+
+          </script>
+
+        </div>
+        """
+
+        components.html(
+            tradingview_chart,
+            height=600
+        )
+
+        st.write("")
+
+        st.subheader("📋 MARKET SCANNER")
+
+        scanner_df = pd.DataFrame({
+
+            "Stock": [
+                "BBCA",
+                "BMRI",
+                "BBRI",
+                "TLKM",
+                "ANTM"
+            ],
+
+            "Price": [
+                9250,
+                6450,
+                4850,
+                3200,
+                1620
+            ],
+
+            "Change": [
+                "+2.41%",
+                "+3.11%",
+                "+1.21%",
+                "-0.51%",
+                "+5.22%"
+            ],
+
+            "Trend": [
+                "Bullish",
+                "Bullish",
+                "Bullish",
+                "Bearish",
+                "Bullish"
+            ]
+
+        })
+
+        st.dataframe(
+            scanner_df,
+            use_container_width=True
+        )
+
+    # RIGHT
+
+    with right:
+
+        st.subheader("🔥 WATCHLIST")
+
+        watchlist_df = pd.DataFrame({
+
+            "Stock": [
+                "BBRI",
+                "BMRI",
+                "TLKM",
+                "ANTM",
+                "GOTO"
+            ],
+
+            "Change": [
+                "+1.21%",
+                "+3.11%",
+                "-0.51%",
+                "+5.22%",
+                "+7.11%"
+            ]
+
+        })
+
+        st.dataframe(
+            watchlist_df,
+            use_container_width=True
+        )
+
+        st.write("")
+
+        st.subheader("🤖 AI SIGNAL")
+
+        st.metric(
+            "AI SCORE",
+            "8/10"
+        )
+
+        st.success("🚀 STRONG BUY")
+
+        st.write("")
+
+        st.write("✅ MACD Bullish")
+        st.write("✅ RSI Healthy")
+        st.write("✅ Volume Surge")
+        st.write("✅ Price Above MA20")
 
 # =========================================================
-# MARKET SCANNER
+# OTHER PAGES
 # =========================================================
 
-st.write("")
+elif selected == "Market Scanner":
 
-st.subheader("📋 Market Scanner")
+    st.title("📈 Market Scanner")
 
-scanner_df = pd.DataFrame({
+elif selected == "Watchlist":
 
-    "Stock": [
-        "BBCA",
-        "BMRI",
-        "BBRI",
-        "TLKM",
-        "ANTM"
-    ],
+    st.title("🔥 Watchlist")
 
-    "Price": [
-        9250,
-        6450,
-        4850,
-        3200,
-        1620
-    ],
+elif selected == "AI Signal":
 
-    "Change": [
-        "+2.41%",
-        "+3.11%",
-        "+1.21%",
-        "-0.51%",
-        "+5.22%"
-    ],
+    st.title("🤖 AI Signal")
 
-    "Trend": [
-        "Bullish",
-        "Bullish",
-        "Bullish",
-        "Bearish",
-        "Bullish"
-    ],
+elif selected == "News":
 
-    "Volume": [
-        "12.45M",
-        "15.21M",
-        "18.32M",
-        "25.11M",
-        "22.17M"
-    ]
+    st.title("📰 News")
 
-})
+elif selected == "Portfolio":
 
-st.dataframe(
-    scanner_df,
-    use_container_width=True
-)
+    st.title("💼 Portfolio")
+
+elif selected == "Settings":
+
+    st.title("⚙ Settings")
