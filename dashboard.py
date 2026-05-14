@@ -365,6 +365,127 @@ elif selected == "Market Scanner":
 
     st.title("📈 Market Scanner")
 
+    st.write("Realtime IDX Stock Scanner")
+
+    scanner_df = pd.DataFrame({
+
+        "Stock": [
+            "BBCA",
+            "BMRI",
+            "BBRI",
+            "TLKM",
+            "ASII",
+            "ANTM",
+            "GOTO"
+        ],
+
+        "Price": [
+            9250,
+            6450,
+            4850,
+            3200,
+            5150,
+            1620,
+            89
+        ],
+
+        "Change": [
+            "+2.41%",
+            "+3.11%",
+            "+1.21%",
+            "-0.51%",
+            "+0.87%",
+            "+5.22%",
+            "+7.11%"
+        ],
+
+        "Trend": [
+            "Bullish",
+            "Bullish",
+            "Bullish",
+            "Bearish",
+            "Bullish",
+            "Bullish",
+            "Bullish"
+        ],
+
+        "Volume": [
+            "12.45M",
+            "15.21M",
+            "18.32M",
+            "25.11M",
+            "8.12M",
+            "22.17M",
+            "55.61M"
+        ],
+
+        "Value": [
+            "1.15T",
+            "980B",
+            "892B",
+            "803B",
+            "211B",
+            "356B",
+            "510B"
+        ]
+
+    })
+
+    st.dataframe(
+        scanner_df,
+        use_container_width=True
+    )
+
+    st.write("")
+
+    st.subheader("🔥 Top Gainers")
+
+    gainers_df = pd.DataFrame({
+
+        "Stock": [
+            "GOTO",
+            "ANTM",
+            "BMRI"
+        ],
+
+        "Change": [
+            "+7.11%",
+            "+5.22%",
+            "+3.11%"
+        ]
+
+    })
+
+    st.dataframe(
+        gainers_df,
+        use_container_width=True
+    )
+
+    st.write("")
+
+    st.subheader("📉 Top Losers")
+
+    losers_df = pd.DataFrame({
+
+        "Stock": [
+            "TLKM",
+            "UNVR",
+            "ICBP"
+        ],
+
+        "Change": [
+            "-0.51%",
+            "-1.12%",
+            "-0.77%"
+        ]
+
+    })
+
+    st.dataframe(
+        losers_df,
+        use_container_width=True
+    )
+
 elif selected == "Watchlist":
 
     st.title("🔥 Watchlist")
