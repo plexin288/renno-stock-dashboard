@@ -176,7 +176,7 @@ if selected == "Dashboard":
 
     st.title("RENNO STOCK TERMINAL")
 
-st.caption("Premium AI Powered IDX Dashboard")
+    st.caption("Premium AI Powered IDX Dashboard")
 
     st.success("🟢 LIVE MARKET ACTIVE")
 
