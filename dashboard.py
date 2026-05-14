@@ -1,5 +1,3 @@
-# 🚀 RENNO STOCK DASHBOARD V2
-
 ```python
 import streamlit as st
 import yfinance as yf
