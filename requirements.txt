@@ -4,3 +4,5 @@ plotly
 pandas
 ta
 streamlit-option-menu
+feedparser
+requests
