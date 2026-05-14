@@ -251,8 +251,10 @@ else:
 # ======================================
 # HEADER
 # ======================================
-st.markdown(f"""
+
+st.markdown("""
 <div class="hero-box">
+
     <div class="main-title">
         📈 RENNO STOCK DASHBOARD
     </div>
@@ -265,6 +267,7 @@ st.markdown(f"""
         <span class="realtime-dot"></span>
         Realtime Market Active
     </p>
+
 </div>
 """, unsafe_allow_html=True)
 
