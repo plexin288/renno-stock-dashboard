@@ -375,7 +375,57 @@ elif selected == "AI Signal":
 
 elif selected == "News":
 
-    st.title("📰 News")
+    st.title("📰 Market News")
+
+    st.write("Berita market terbaru hari ini")
+
+    # ======================================
+    # RSS NEWS
+    # ======================================
+
+    rss_url = "https://www.cnbcindonesia.com/market/rss"
+
+    feed = feedparser.parse(rss_url)
+
+    for entry in feed.entries[:10]:
+
+        st.subheader(entry.title)
+
+        st.caption(entry.published)
+
+        st.write(entry.link)
+
+        st.divider()
+
+    # ======================================
+    # MARKET UPDATE
+    # ======================================
+
+    st.subheader("📊 Market Update")
+
+    market_data = {
+
+        "Asset": [
+            "IHSG",
+            "NASDAQ",
+            "S&P500",
+            "BTC",
+            "GOLD"
+        ],
+
+        "Change": [
+            "+1.22%",
+            "+0.88%",
+            "+0.74%",
+            "+2.51%",
+            "-0.12%"
+        ]
+    }
+
+    st.dataframe(
+        market_data,
+        use_container_width=True
+    )
 
 elif selected == "Portfolio":
 
