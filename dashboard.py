@@ -58,33 +58,40 @@ def load_data(symbol, period):
 
 data = load_data(selected_stock, period)
 
+# FIX DATAFRAME
+close_series = data['Close'].squeeze()
+open_series = data['Open'].squeeze()
+high_series = data['High'].squeeze()
+low_series = data['Low'].squeeze()
+volume_series = data['Volume'].squeeze()
+
 # =========================
 # INDICATORS
 # =========================
 
 # RSI
-rsi = RSIIndicator(close=data['Close'])
+rsi = RSIIndicator(close=close_series)
 data['RSI'] = rsi.rsi()
 
 # MACD
-macd = MACD(close=data['Close'])
+macd = MACD(close=close_series)
 data['MACD'] = macd.macd()
 data['MACD_SIGNAL'] = macd.macd_signal()
 
 # MA20
-ma20 = SMAIndicator(close=data['Close'], window=20)
+ma20 = SMAIndicator(close=close_series, window=20)
 data['MA20'] = ma20.sma_indicator()
 
 # MA50
-ma50 = SMAIndicator(close=data['Close'], window=50)
+ma50 = SMAIndicator(close=close_series, window=50)
 data['MA50'] = ma50.sma_indicator()
 
 # =========================
 # PRICE INFO
 # =========================
 
-latest_close = float(data['Close'].iloc[-1])
-latest_open = float(data['Open'].iloc[-1])
+latest_close = float(close_series.iloc[-1])
+latest_open = float(open_series.iloc[-1])
 
 change = latest_close - latest_open
 change_percent = (change / latest_open) * 100
@@ -106,10 +113,10 @@ fig = go.Figure()
 
 fig.add_trace(go.Candlestick(
     x=data.index,
-    open=data['Open'],
-    high=data['High'],
-    low=data['Low'],
-    close=data['Close'],
+    open=open_series,
+    high=high_series,
+    low=low_series,
+    close=close_series,
     name='Candlestick'
 ))
 
@@ -199,7 +206,7 @@ volume_fig = go.Figure()
 
 volume_fig.add_trace(go.Bar(
     x=data.index,
-    y=data['Volume'],
+    y=volume_series,
     name='Volume'
 ))
 
@@ -252,9 +259,10 @@ watchlist_data = []
 for stock in stocks:
     try:
         df = yf.download(stock, period="5d")
+        close = df['Close'].squeeze()
 
-        close_price = float(df['Close'].iloc[-1])
-        prev_price = float(df['Close'].iloc[-2])
+        close_price = float(close.iloc[-1])
+        prev_price = float(close.iloc[-2])
 
         percent = ((close_price - prev_price) / prev_price) * 100
 
@@ -268,6 +276,7 @@ for stock in stocks:
         pass
 
 watchlist_df = pd.DataFrame(watchlist_data)
+
 watchlist_df = watchlist_df.sort_values(
     by="Change %",
     ascending=False
