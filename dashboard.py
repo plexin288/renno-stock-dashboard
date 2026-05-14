@@ -99,7 +99,7 @@ section[data-testid="stSidebar"] {
 
 with st.sidebar:
 
-    st.markdown("# 🚀 RENNO TERMINAL")
+    st.image("logo.png", width=180)
 
     selected = option_menu(
 
