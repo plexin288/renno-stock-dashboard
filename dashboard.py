@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -605,5 +604,3 @@ for _, row in market_df.head(10).iterrows():
         </p>
     </div>
     ''', unsafe_allow_html=True)
-
-```
