@@ -174,15 +174,9 @@ if selected == "Dashboard":
 
     # HEADER
 
-    st.markdown(
-        '<div class="big-title">RENNO STOCK <span class="glow">TERMINAL</span></div>',
-        unsafe_allow_html=True
-    )
+    st.title("RENNO STOCK TERMINAL")
 
-    st.markdown(
-        '<div class="sub-title">Premium AI Powered IDX Dashboard</div>',
-        unsafe_allow_html=True
-    )
+st.caption("Premium AI Powered IDX Dashboard")
 
     st.success("🟢 LIVE MARKET ACTIVE")
 
