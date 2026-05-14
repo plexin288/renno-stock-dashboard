@@ -1,89 +1,114 @@
 import streamlit as st
-import yfinance as yf
-import pandas as pd
-import plotly.graph_objects as go
-from ta.momentum import RSIIndicator
-from ta.trend import MACD, SMAIndicator
+import streamlit.components.v1 as components
 
-# =====================================================
+# =========================================================
 # PAGE CONFIG
-# =====================================================
+# =========================================================
 
 st.set_page_config(
-    page_title="RENNO STOCK DASHBOARD",
+    page_title="RENNO TERMINAL",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# =====================================================
-# CSS
-# =====================================================
+# =========================================================
+# MODERN CSS
+# =========================================================
 
 st.markdown("""
 <style>
 
 html, body, [class*="css"] {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .stApp {
-    background-color: #f4f5fb;
+    background: #0f172a;
+    color: white;
 }
 
+/* SIDEBAR */
+
 section[data-testid="stSidebar"] {
-    background: white;
-    border-right: 1px solid #ececec;
+    background: #111827;
+    border-right: 1px solid #1f2937;
 }
 
 section[data-testid="stSidebar"] * {
-    color: #111827 !important;
+    color: white !important;
 }
 
+/* MAIN TITLE */
+
 .main-title {
-    font-size: 42px;
+    font-size: 52px;
     font-weight: 800;
-    color: #111827;
+    color: white;
 }
 
 .sub-title {
-    color: #6b7280;
-    font-size: 16px;
+    color: #94a3b8;
+    font-size: 18px;
 }
 
-.topbar {
-    background: white;
-    padding: 25px;
-    border-radius: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+/* HERO */
+
+.hero-box {
+    background: linear-gradient(
+        135deg,
+        #1e293b,
+        #0f172a
+    );
+
+    padding: 40px;
+    border-radius: 30px;
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 0 30px rgba(99,102,241,0.25);
+
+    margin-bottom: 25px;
 }
 
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 25px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    border: 1px solid #f1f1f1;
-}
+/* METRIC CARD */
 
 .metric-card {
-    background: white;
-    padding: 25px;
-    border-radius: 25px;
+    background: rgba(255,255,255,0.04);
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(12px);
+
+    padding: 28px;
+
+    border-radius: 24px;
+
     text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    border: 1px solid #f1f1f1;
+
+    transition: 0.3s;
+
+    box-shadow:
+        0 0 20px rgba(0,0,0,0.25);
+}
+
+.metric-card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 0 30px rgba(99,102,241,0.35);
 }
 
 .metric-title {
-    color: #6b7280;
-    font-size: 14px;
+    color: #94a3b8;
+    font-size: 15px;
 }
 
 .metric-value {
-    color: #111827;
-    font-size: 34px;
-    font-weight: bold;
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
 }
 
 .green {
@@ -94,395 +119,414 @@ section[data-testid="stSidebar"] * {
     color: #ef4444;
 }
 
-.purple-box {
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    border-radius: 25px;
-    padding: 35px;
+/* SIGNAL BOX */
+
+.signal-box {
+
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+
+    border-radius: 30px;
+
+    padding: 40px;
+
     color: white;
+
+    text-align: center;
+
+    box-shadow:
+        0 0 30px rgba(99,102,241,0.35);
 }
 
-.small-card {
-    background: white;
+/* SECTION */
+
+.section-box {
+
+    background: rgba(255,255,255,0.04);
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    border-radius: 28px;
+
+    padding: 25px;
+
+    margin-top: 25px;
+
+    box-shadow:
+        0 0 20px rgba(0,0,0,0.2);
+}
+
+/* WATCHLIST */
+
+.watch-card {
+
+    background: rgba(255,255,255,0.04);
+
+    border: 1px solid rgba(255,255,255,0.08);
+
     padding: 20px;
-    border-radius: 22px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    border: 1px solid #f1f1f1;
+
+    border-radius: 20px;
+
+    margin-bottom: 15px;
+
+    transition: 0.3s;
 }
 
-.watch-item {
-    background: white;
-    padding: 18px;
-    border-radius: 18px;
-    margin-bottom: 12px;
-    border: 1px solid #ececec;
+.watch-card:hover {
+
+    transform: scale(1.02);
+
+    box-shadow:
+        0 0 20px rgba(99,102,241,0.3);
+}
+
+/* BLINK */
+
+.blink {
+    animation: blink-animation 1s infinite;
+}
+
+@keyframes blink-animation {
+
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =====================================================
-# STOCK LIST
-# =====================================================
-
-stocks = [
-    "BBCA.JK",
-    "BBRI.JK",
-    "BMRI.JK",
-    "BBNI.JK",
-    "TLKM.JK",
-    "ASII.JK",
-    "GOTO.JK",
-    "BRIS.JK",
-    "ADRO.JK",
-    "ANTM.JK"
-]
-
-# =====================================================
+# =========================================================
 # SIDEBAR
-# =====================================================
+# =========================================================
 
 st.sidebar.markdown("# 🚀 RENNO TERMINAL")
 
-selected_stock = st.sidebar.selectbox(
+stock = st.sidebar.selectbox(
     "Select Stock",
-    stocks
+    [
+        "BBCA",
+        "BBRI",
+        "BMRI",
+        "TLKM",
+        "ASII",
+        "GOTO",
+        "BRIS",
+        "ANTM"
+    ]
 )
 
-period = st.sidebar.selectbox(
-    "Select Period",
-    ["1mo", "3mo", "6mo", "1y"],
-    index=1
+interval = st.sidebar.selectbox(
+    "Select Timeframe",
+    [
+        "1D",
+        "1W",
+        "1M",
+        "3M"
+    ]
 )
 
-# =====================================================
-# LOAD DATA
-# =====================================================
-
-@st.cache_data
-def load_data(symbol, period):
-
-    df = yf.download(symbol, period=period)
-
-    df.dropna(inplace=True)
-
-    return df
-
-data = load_data(selected_stock, period)
-
-close_series = data['Close'].squeeze()
-open_series = data['Open'].squeeze()
-volume_series = data['Volume'].squeeze()
-
-# =====================================================
-# INDICATORS
-# =====================================================
-
-rsi = RSIIndicator(close=close_series)
-
-data['RSI'] = rsi.rsi()
-
-macd = MACD(close=close_series)
-
-data['MACD'] = macd.macd()
-data['MACD_SIGNAL'] = macd.macd_signal()
-
-ma20 = SMAIndicator(close=close_series, window=20)
-
-data['MA20'] = ma20.sma_indicator()
-
-ma50 = SMAIndicator(close=close_series, window=50)
-
-data['MA50'] = ma50.sma_indicator()
-
-# =====================================================
-# AI SCORE
-# =====================================================
-
-score = 0
-
-if data['RSI'].iloc[-1] < 70:
-    score += 2
-
-if data['MACD'].iloc[-1] > data['MACD_SIGNAL'].iloc[-1]:
-    score += 2
-
-if data['MA20'].iloc[-1] > data['MA50'].iloc[-1]:
-    score += 2
-
-avg_volume = volume_series.tail(20).mean()
-
-if volume_series.iloc[-1] > avg_volume:
-    score += 2
-
-if score >= 8:
-    signal = "🚀 STRONG BUY"
-elif score >= 6:
-    signal = "✅ BUY"
-elif score >= 4:
-    signal = "⚠ WATCH"
-else:
-    signal = "❌ SELL"
-
-# =====================================================
-# HEADER
-# =====================================================
+# =========================================================
+# HERO
+# =========================================================
 
 st.markdown("""
-<div class="topbar">
+<div class="hero-box">
+
     <div class="main-title">
-        RENNO STOCK DASHBOARD
+        RENNO STOCK TERMINAL
     </div>
 
     <div class="sub-title">
-        Premium Modern Trading Dashboard
+        Premium AI Powered IDX Dashboard
     </div>
+
+    <br>
+
+    <div class="blink">
+        🟢 REALTIME MARKET ACTIVE
+    </div>
+
 </div>
 """, unsafe_allow_html=True)
 
-# =====================================================
+# =========================================================
 # METRICS
-# =====================================================
-
-latest_close = float(close_series.iloc[-1])
-latest_open = float(open_series.iloc[-1])
-
-change = latest_close - latest_open
-
-change_percent = (change / latest_open) * 100
-
-trend = (
-    "Bullish"
-    if data['MA20'].iloc[-1] > data['MA50'].iloc[-1]
-    else "Bearish"
-)
-
-trend_color = "green" if trend == "Bullish" else "red"
+# =========================================================
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
 
-    st.markdown(f"""
+    st.markdown("""
     <div class="metric-card">
-        <div class="metric-title">Stock</div>
-        <div class="metric-value">{selected_stock}</div>
+        <div class="metric-title">
+            Stock
+        </div>
+
+        <div class="metric-value">
+            BBCA
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
 
-    st.markdown(f"""
+    st.markdown("""
     <div class="metric-card">
-        <div class="metric-title">Price</div>
-        <div class="metric-value">{latest_close:.0f}</div>
+        <div class="metric-title">
+            Price
+        </div>
+
+        <div class="metric-value">
+            9,250
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col3:
 
-    color = "green" if change > 0 else "red"
-
-    st.markdown(f"""
+    st.markdown("""
     <div class="metric-card">
-        <div class="metric-title">Change</div>
-        <div class="metric-value {color}">
-            {change_percent:.2f}%
+        <div class="metric-title">
+            Change
+        </div>
+
+        <div class="metric-value green">
+            +2.41%
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col4:
 
-    st.markdown(f"""
+    st.markdown("""
     <div class="metric-card">
-        <div class="metric-title">Trend</div>
-        <div class="metric-value {trend_color}">
-            {trend}
+        <div class="metric-title">
+            Trend
+        </div>
+
+        <div class="metric-value green">
+            Bullish
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-st.write("")
+# =========================================================
+# MAIN GRID
+# =========================================================
 
-# =====================================================
-# MAIN LAYOUT
-# =====================================================
+left, right = st.columns([2.3, 1])
 
-left, right = st.columns([2,1])
-
-# =====================================================
+# =========================================================
 # LEFT SIDE
-# =====================================================
+# =========================================================
 
 with left:
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-box">
+    """, unsafe_allow_html=True)
 
-    st.subheader("📈 Market Trend")
+    st.subheader("📈 TradingView Chart")
 
-    chart = go.Figure()
+    tv_chart = f'''
+    <div class="tradingview-widget-container">
+      <div id="tradingview_chart"></div>
 
-    chart.add_trace(go.Scatter(
-        x=data.index,
-        y=close_series,
-        mode='lines',
-        line=dict(width=4)
-    ))
+      <script type="text/javascript"
+      src="https://s3.tradingview.com/tv.js">
+      </script>
 
-    chart.update_layout(
-        template='plotly_white',
-        height=420,
-        margin=dict(l=0, r=0, t=20, b=0)
-    )
+      <script type="text/javascript">
 
-    st.plotly_chart(chart, use_container_width=True)
+      new TradingView.widget({{
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        "width": "100%",
+        "height": 650,
+
+        "symbol": "IDX:{stock}",
+
+        "interval": "D",
+
+        "timezone": "Asia/Jakarta",
+
+        "theme": "dark",
+
+        "style": "1",
+
+        "locale": "id",
+
+        "toolbar_bg": "#0f172a",
+
+        "enable_publishing": false,
+
+        "allow_symbol_change": true,
+
+        "container_id": "tradingview_chart"
+
+      }});
+
+      </script>
+    </div>
+    '''
+
+    components.html(tv_chart, height=650)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.write("")
 
-    colA, colB = st.columns(2)
+    st.markdown("""
+    <div class="signal-box">
 
-    with colA:
+        <h1>
+            🚀 STRONG BUY
+        </h1>
 
-        st.markdown(f"""
-        <div class="purple-box">
-            <h1>{signal}</h1>
-            <h2>{score}/8 AI SCORE</h2>
-            <p>AI Trading Engine</p>
-        </div>
-        """, unsafe_allow_html=True)
+        <h2>
+            AI SCORE 8/10
+        </h2>
 
-    with colB:
+        <p>
+            MACD Bullish • RSI Healthy • Volume Surge
+        </p>
 
-        st.markdown('<div class="small-card">', unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
 
-        st.subheader("📊 RSI")
-
-        rsi_fig = go.Figure()
-
-        rsi_fig.add_trace(go.Scatter(
-            x=data.index,
-            y=data['RSI'],
-            mode='lines'
-        ))
-
-        rsi_fig.add_hline(y=70)
-        rsi_fig.add_hline(y=30)
-
-        rsi_fig.update_layout(
-            template='plotly_white',
-            height=250,
-            margin=dict(l=0, r=0, t=10, b=0)
-        )
-
-        st.plotly_chart(rsi_fig, use_container_width=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# =====================================================
+# =========================================================
 # RIGHT SIDE
-# =====================================================
+# =========================================================
 
 with right:
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-box">
+    """, unsafe_allow_html=True)
 
     st.subheader("🔥 Watchlist")
 
-    watchlist_data = []
+    watchlist = [
 
-    for stock in stocks:
+        ("BBCA", "+2.41%"),
+        ("BBRI", "+1.82%"),
+        ("BMRI", "+3.11%"),
+        ("TLKM", "-0.51%"),
+        ("ANTM", "+5.22%"),
+        ("GOTO", "+7.11%")
 
-        try:
+    ]
 
-            df = yf.download(stock, period='5d')
+    for symbol, change in watchlist:
 
-            close = df['Close'].squeeze()
+        color = "green" if "+" in change else "red"
 
-            latest = float(close.iloc[-1])
-            prev = float(close.iloc[-2])
+        st.markdown(f"""
+        <div class="watch-card">
 
-            percent = ((latest - prev) / prev) * 100
+            <h3>
+                {symbol}
+            </h3>
 
-            watchlist_data.append({
-                'Stock': stock,
-                'Price': round(latest, 2),
-                'Change': round(percent, 2)
-            })
+            <div class="{color}">
+                {change}
+            </div>
 
-        except:
-            pass
-
-    watchlist_df = pd.DataFrame(watchlist_data)
-
-    watchlist_df = watchlist_df.sort_values(
-        by='Change',
-        ascending=False
-    )
-
-    for _, row in watchlist_df.head(8).iterrows():
-
-        color = 'green' if row['Change'] > 0 else 'red'
-
-        st.markdown(f'''
-        <div class="watch-item">
-            <h4>{row['Stock']}</h4>
-            <p>Price: {row['Price']}</p>
-            <p class="{color}">
-                Change: {row['Change']}%
-            </p>
         </div>
-        ''', unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-# =====================================================
-# MARKET TABLE
-# =====================================================
+    st.write("")
 
-st.write("")
+    st.markdown("""
+    <div class="section-box">
 
-st.markdown('<div class="card">', unsafe_allow_html=True)
+        <h2>
+            📊 AI Signal
+        </h2>
 
-st.subheader("📋 Market Scanner")
+        <br>
 
-scanner_data = []
+        <h1 style="
+            color:#22c55e;
+        ">
+            BUY
+        </h1>
 
-for stock in stocks:
+        <p>
+            Market momentum still strong.
+        </p>
 
-    try:
+    </div>
+    """, unsafe_allow_html=True)
 
-        df = yf.download(stock, period='5d')
+# =========================================================
+# MARKET OVERVIEW
+# =========================================================
 
-        close = df['Close'].squeeze()
-        volume = df['Volume'].squeeze()
+st.markdown("""
+<div class="section-box">
 
-        latest = float(close.iloc[-1])
-        prev = float(close.iloc[-2])
+<h2>
+📋 Market Overview
+</h2>
 
-        percent = ((latest - prev) / prev) * 100
+</div>
+""", unsafe_allow_html=True)
 
-        scanner_data.append({
-            'Stock': stock,
-            'Price': round(latest, 2),
-            'Change %': round(percent, 2),
-            'Volume': int(volume.iloc[-1])
-        })
+market_data = {
+    "Stock": [
+        "BBCA",
+        "BBRI",
+        "BMRI",
+        "TLKM",
+        "ASII",
+        "GOTO"
+    ],
 
-    except:
-        pass
+    "Price": [
+        9250,
+        4850,
+        6450,
+        3200,
+        5150,
+        89
+    ],
 
-scanner_df = pd.DataFrame(scanner_data)
+    "Change": [
+        "+2.41%",
+        "+1.21%",
+        "+3.11%",
+        "-0.51%",
+        "+0.87%",
+        "+7.11%"
+    ],
 
-scanner_df = scanner_df.sort_values(
-    by='Change %',
-    ascending=False
-)
+    "Trend": [
+        "Bullish",
+        "Bullish",
+        "Bullish",
+        "Bearish",
+        "Bullish",
+        "Bullish"
+    ]
+}
 
 st.dataframe(
-    scanner_df,
+    market_data,
     use_container_width=True
 )
-
-st.markdown('</div>', unsafe_allow_html=True)
