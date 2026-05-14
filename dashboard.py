@@ -7,78 +7,84 @@ from ta.trend import MACD
 from ta.trend import SMAIndicator
 import streamlit.components.v1 as components
 
-# =====================================================
+# ======================================================
 # PAGE CONFIG
-# =====================================================
+# ======================================================
 
 st.set_page_config(
     page_title="RENNO STOCK DASHBOARD",
     layout="wide"
 )
 
-# =====================================================
-# CUSTOM CSS
-# =====================================================
+# ======================================================
+# CSS
+# ======================================================
 
 st.markdown("""
 <style>
 
 html, body, [class*="css"] {
-    background-color: #050816;
-    color: white;
+    background-color: #f4f7fe;
+    color: #111827;
     font-family: 'Segoe UI', sans-serif;
 }
 
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #071028, #020617);
+    background: #111827;
     border-right: 1px solid #1e293b;
+}
+
+section[data-testid="stSidebar"] * {
+    color: white !important;
 }
 
 .main-title {
     font-size: 64px;
     font-weight: 800;
-    color: white;
-    margin-bottom: 10px;
+    color: #111827;
+    line-height: 1.1;
+}
+
+.main-highlight {
+    color: #4f46e5;
 }
 
 .sub-title {
-    color: #94a3b8;
+    color: #6b7280;
     font-size: 20px;
+    margin-top: 10px;
 }
 
 .hero-box {
-    background: linear-gradient(135deg, #0f172a, #020617);
-    padding: 40px;
-    border-radius: 28px;
-    border: 1px solid #1e293b;
+    background: white;
+    border-radius: 30px;
+    padding: 50px;
     margin-bottom: 30px;
-    box-shadow: 0 0 30px rgba(59,130,246,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .metric-card {
-    background: linear-gradient(135deg, #0f172a, #020617);
+    background: white;
+    border-radius: 24px;
     padding: 25px;
-    border-radius: 22px;
-    border: 1px solid #1e293b;
-    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
     transition: all 0.3s ease;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    border: 1px solid #e5e7eb;
 }
 
 .metric-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 0 30px rgba(59,130,246,0.25);
 }
 
 .metric-title {
-    color: #94a3b8;
+    color: #6b7280;
     font-size: 14px;
 }
 
 .metric-value {
-    color: white;
     font-size: 34px;
     font-weight: bold;
+    color: #111827;
 }
 
 .green {
@@ -89,29 +95,31 @@ section[data-testid="stSidebar"] {
     color: #ef4444;
 }
 
-.ai-box {
-    background: linear-gradient(135deg, #111827, #020617);
-    border: 1px solid #1e293b;
-    border-radius: 24px;
-    padding: 30px;
+.ai-card {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    border-radius: 28px;
+    padding: 40px;
+    color: white;
     text-align: center;
     margin-top: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 25px rgba(34,197,94,0.15);
+    margin-bottom: 30px;
 }
 
 .watch-card {
-    background: linear-gradient(135deg, #0f172a, #020617);
-    border-radius: 18px;
-    padding: 18px;
-    margin-bottom: 14px;
-    border: 1px solid #1e293b;
-    transition: all 0.3s ease;
+    background: white;
+    border-radius: 22px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
 }
 
-.watch-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(59,130,246,0.25);
+.table-box {
+    background: white;
+    border-radius: 24px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    margin-top: 20px;
 }
 
 .realtime-dot {
@@ -129,17 +137,12 @@ section[data-testid="stSidebar"] {
     100% {opacity: 1;}
 }
 
-.stDataFrame {
-    border-radius: 20px;
-    overflow: hidden;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-# =====================================================
+# ======================================================
 # STOCK LIST
-# =====================================================
+# ======================================================
 
 stocks = [
     "BBCA.JK","BBRI.JK","BMRI.JK","BBNI.JK",
@@ -148,14 +151,14 @@ stocks = [
     "ICBP.JK","INDF.JK","CPIN.JK","KLBF.JK"
 ]
 
-# =====================================================
+# ======================================================
 # SIDEBAR
-# =====================================================
+# ======================================================
 
-st.sidebar.markdown("# ⚙️ RENNO TERMINAL")
+st.sidebar.markdown("# 📊 RENNO TERMINAL")
 
 selected_stock = st.sidebar.selectbox(
-    "Pilih Saham",
+    "Select Stock",
     stocks
 )
 
@@ -165,9 +168,9 @@ period = st.sidebar.selectbox(
     index=1
 )
 
-# =====================================================
+# ======================================================
 # LOAD DATA
-# =====================================================
+# ======================================================
 
 @st.cache_data
 def load_data(symbol, period):
@@ -181,9 +184,9 @@ close_series = data['Close'].squeeze()
 open_series = data['Open'].squeeze()
 volume_series = data['Volume'].squeeze()
 
-# =====================================================
+# ======================================================
 # INDICATORS
-# =====================================================
+# ======================================================
 
 rsi = RSIIndicator(close=close_series)
 data['RSI'] = rsi.rsi()
@@ -198,9 +201,9 @@ data['MA20'] = ma20.sma_indicator()
 ma50 = SMAIndicator(close=close_series, window=50)
 data['MA50'] = ma50.sma_indicator()
 
-# =====================================================
+# ======================================================
 # AI SCORE
-# =====================================================
+# ======================================================
 
 score = 0
 
@@ -219,27 +222,28 @@ if volume_series.iloc[-1] > avg_volume:
     score += 2
 
 if score >= 8:
-    signal = "🚀 STRONG BUY"
+    signal = "STRONG BUY"
 elif score >= 6:
-    signal = "✅ BUY"
+    signal = "BUY"
 elif score >= 4:
-    signal = "⚠ WATCH"
+    signal = "WATCH"
 else:
-    signal = "❌ SELL"
+    signal = "SELL"
 
-# =====================================================
-# HERO SECTION
-# =====================================================
+# ======================================================
+# HERO
+# ======================================================
 
 hero_html = """
 <div class="hero-box">
 
     <div class="main-title">
-        📈 RENNO STOCK DASHBOARD
+        <span class="main-highlight">RENNO</span>
+        STOCK DASHBOARD
     </div>
 
     <p class="sub-title">
-        Premium IDX Trading Dashboard
+        Premium AI Powered IDX Market Dashboard
     </p>
 
     <p>
@@ -252,9 +256,9 @@ hero_html = """
 
 st.markdown(hero_html, unsafe_allow_html=True)
 
-# =====================================================
+# ======================================================
 # METRICS
-# =====================================================
+# ======================================================
 
 latest_close = float(close_series.iloc[-1])
 latest_open = float(open_series.iloc[-1])
@@ -273,6 +277,7 @@ trend_color = "green" if trend_status == "Bullish" else "red"
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
+
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-title">Stock</div>
@@ -281,6 +286,7 @@ with col1:
     """, unsafe_allow_html=True)
 
 with col2:
+
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-title">Price</div>
@@ -312,25 +318,74 @@ with col4:
     </div>
     """, unsafe_allow_html=True)
 
-# =====================================================
+# ======================================================
 # AI SIGNAL
-# =====================================================
-
-st.markdown("## 🤖 AI Signal")
+# ======================================================
 
 st.markdown(f"""
-<div class="ai-box">
+<div class="ai-card">
     <h1>{signal}</h1>
-    <h2>{score}/8</h2>
-    <p>AI Confidence Score</p>
+    <h2>{score}/8 AI SCORE</h2>
+    <p>AI Trading Signal Engine</p>
 </div>
 """, unsafe_allow_html=True)
 
-# =====================================================
-# TRADINGVIEW CHART
-# =====================================================
+# ======================================================
+# TABLE
+# ======================================================
 
-st.markdown("## 📊 TradingView Chart")
+scanner_data = []
+
+for stock in stocks:
+
+    try:
+
+        df = yf.download(stock, period="5d")
+
+        close = df['Close'].squeeze()
+        volume = df['Volume'].squeeze()
+
+        close_price = float(close.iloc[-1])
+        prev_price = float(close.iloc[-2])
+
+        percent = ((close_price - prev_price) / prev_price) * 100
+
+        trend = "Bullish" if percent > 0 else "Bearish"
+
+        scanner_data.append({
+            "Stock": stock,
+            "Price": round(close_price, 2),
+            "Change %": round(percent, 2),
+            "Volume": int(volume.iloc[-1]),
+            "Trend": trend
+        })
+
+    except:
+        pass
+
+scanner_df = pd.DataFrame(scanner_data)
+
+scanner_df = scanner_df.sort_values(
+    by="Change %",
+    ascending=False
+)
+
+st.markdown("## 📈 Market Scanner")
+
+st.markdown('<div class="table-box">', unsafe_allow_html=True)
+
+st.dataframe(
+    scanner_df,
+    use_container_width=True
+)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ======================================================
+# TRADINGVIEW
+# ======================================================
+
+st.markdown("## 📊 Trading Chart")
 
 symbol_tv = selected_stock.replace(".JK", "")
 
@@ -350,10 +405,10 @@ tv_widget = f'''
     "symbol": "IDX:{symbol_tv}",
     "interval": "D",
     "timezone": "Asia/Jakarta",
-    "theme": "dark",
+    "theme": "light",
     "style": "1",
     "locale": "id",
-    "toolbar_bg": "#050816",
+    "toolbar_bg": "#ffffff",
     "enable_publishing": false,
     "hide_side_toolbar": false,
     "allow_symbol_change": true,
@@ -366,118 +421,32 @@ tv_widget = f'''
 
 components.html(tv_widget, height=700)
 
-# =====================================================
-# RSI + MACD
-# =====================================================
-
-left, right = st.columns(2)
-
-with left:
-
-    st.markdown("## 📈 RSI")
-
-    rsi_fig = go.Figure()
-
-    rsi_fig.add_trace(go.Scatter(
-        x=data.index,
-        y=data['RSI'],
-        mode='lines',
-        name='RSI'
-    ))
-
-    rsi_fig.add_hline(y=70)
-    rsi_fig.add_hline(y=30)
-
-    rsi_fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#050816",
-        plot_bgcolor="#050816",
-        height=350
-    )
-
-    st.plotly_chart(rsi_fig, use_container_width=True)
-
-with right:
-
-    st.markdown("## 🚀 MACD")
-
-    macd_fig = go.Figure()
-
-    macd_fig.add_trace(go.Scatter(
-        x=data.index,
-        y=data['MACD'],
-        mode='lines',
-        name='MACD'
-    ))
-
-    macd_fig.add_trace(go.Scatter(
-        x=data.index,
-        y=data['MACD_SIGNAL'],
-        mode='lines',
-        name='Signal'
-    ))
-
-    macd_fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#050816",
-        plot_bgcolor="#050816",
-        height=350
-    )
-
-    st.plotly_chart(macd_fig, use_container_width=True)
-
-# =====================================================
+# ======================================================
 # WATCHLIST
-# =====================================================
+# ======================================================
 
 st.markdown("## 🔥 Top Watchlist")
 
-watchlist_data = []
-
-for stock in stocks:
-
-    try:
-
-        df = yf.download(stock, period="5d")
-
-        close = df['Close'].squeeze()
-        volume = df['Volume'].squeeze()
-
-        close_price = float(close.iloc[-1])
-        prev_price = float(close.iloc[-2])
-
-        percent = ((close_price - prev_price) / prev_price) * 100
-
-        watchlist_data.append({
-            "Stock": stock,
-            "Price": round(close_price, 2),
-            "Change %": round(percent, 2),
-            "Volume": int(volume.iloc[-1])
-        })
-
-    except:
-        pass
-
-watchlist_df = pd.DataFrame(watchlist_data)
-
-watchlist_df = watchlist_df.sort_values(
-    by="Change %",
-    ascending=False
-)
-
-for _, row in watchlist_df.head(10).iterrows():
+for _, row in scanner_df.head(6).iterrows():
 
     color = "green" if row['Change %'] > 0 else "red"
 
-    icon = "📈" if row['Change %'] > 0 else "📉"
-
     st.markdown(f'''
     <div class="watch-card">
-        <h3>{icon} {row['Stock']}</h3>
-        <p>Price: {row['Price']}</p>
-        <p>Volume: {row['Volume']:,}</p>
+
+        <h3>{row['Stock']}</h3>
+
+        <p>
+            Price: {row['Price']}
+        </p>
+
+        <p>
+            Volume: {row['Volume']:,}
+        </p>
+
         <p class="{color}">
             Change: {row['Change %']}%
         </p>
+
     </div>
     ''', unsafe_allow_html=True)
