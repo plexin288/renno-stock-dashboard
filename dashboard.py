@@ -252,7 +252,7 @@ else:
 # HEADER
 # ======================================
 
-st.markdown("""
+st.markdown(f"""
 <div class="hero-box">
 
     <div class="main-title">
