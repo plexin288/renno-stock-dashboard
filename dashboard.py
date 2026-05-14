@@ -268,6 +268,21 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+    <div class="main-title">
+        📈 RENNO STOCK DASHBOARD
+    </div>
+
+    <p class="sub-title">
+        Premium IDX Trading Dashboard
+    </p>
+
+    <p>
+        <span class="realtime-dot"></span>
+        Realtime Market Active
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
 # ======================================
 # METRICS
 # ======================================
