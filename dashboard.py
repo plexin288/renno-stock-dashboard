@@ -17,63 +17,37 @@ st.set_page_config(
 )
 
 # ======================================================
-# CSS
+# SIMPLE MODERN CSS
 # ======================================================
 
 st.markdown("""
 <style>
 
-html, body, [class*="css"] {
+.stApp {
     background-color: #f4f7fe;
-    color: #111827;
-    font-family: 'Segoe UI', sans-serif;
 }
 
 section[data-testid="stSidebar"] {
     background: #111827;
-    border-right: 1px solid #1e293b;
 }
 
 section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-.main-title {
-    font-size: 64px;
-    font-weight: 800;
-    color: #111827;
-    line-height: 1.1;
-}
-
-.main-highlight {
-    color: #4f46e5;
-}
-
-.sub-title {
-    color: #6b7280;
-    font-size: 20px;
-    margin-top: 10px;
-}
-
-.hero-box {
-    background: white;
-    border-radius: 30px;
-    padding: 50px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+h1 {
+    color: #111827 !important;
+    font-size: 60px !important;
+    font-weight: 800 !important;
 }
 
 .metric-card {
     background: white;
-    border-radius: 24px;
     padding: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
-    transition: all 0.3s ease;
+    border-radius: 24px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    text-align: center;
     border: 1px solid #e5e7eb;
-}
-
-.metric-card:hover {
-    transform: translateY(-5px);
 }
 
 .metric-title {
@@ -82,9 +56,9 @@ section[data-testid="stSidebar"] * {
 }
 
 .metric-value {
+    color: #111827;
     font-size: 34px;
     font-weight: bold;
-    color: #111827;
 }
 
 .green {
@@ -95,10 +69,10 @@ section[data-testid="stSidebar"] * {
     color: #ef4444;
 }
 
-.ai-card {
+.ai-box {
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    border-radius: 28px;
     padding: 40px;
+    border-radius: 30px;
     color: white;
     text-align: center;
     margin-top: 20px;
@@ -107,34 +81,11 @@ section[data-testid="stSidebar"] * {
 
 .watch-card {
     background: white;
-    border-radius: 22px;
     padding: 20px;
+    border-radius: 22px;
     margin-bottom: 15px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.05);
     border: 1px solid #e5e7eb;
-}
-
-.table-box {
-    background: white;
-    border-radius: 24px;
-    padding: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    margin-top: 20px;
-}
-
-.realtime-dot {
-    height: 10px;
-    width: 10px;
-    background-color: #22c55e;
-    border-radius: 50%;
-    display: inline-block;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0% {opacity: 1;}
-    50% {opacity: 0.3;}
-    100% {opacity: 1;}
 }
 
 </style>
@@ -155,7 +106,7 @@ stocks = [
 # SIDEBAR
 # ======================================================
 
-st.sidebar.markdown("# 📊 RENNO TERMINAL")
+st.sidebar.title("RENNO TERMINAL")
 
 selected_stock = st.sidebar.selectbox(
     "Select Stock",
@@ -231,30 +182,16 @@ else:
     signal = "SELL"
 
 # ======================================================
-# HERO
+# HEADER
 # ======================================================
 
-hero_html = """
-<div class="hero-box">
+st.title("RENNO STOCK DASHBOARD")
 
-    <div class="main-title">
-        <span class="main-highlight">RENNO</span>
-        STOCK DASHBOARD
-    </div>
+st.markdown(
+    "### Premium AI Powered IDX Market Dashboard"
+)
 
-    <p class="sub-title">
-        Premium AI Powered IDX Market Dashboard
-    </p>
-
-    <p>
-        <span class="realtime-dot"></span>
-        Realtime Market Active
-    </p>
-
-</div>
-"""
-
-st.markdown(hero_html, unsafe_allow_html=True)
+st.success("🟢 Realtime Market Active")
 
 # ======================================================
 # METRICS
@@ -323,7 +260,7 @@ with col4:
 # ======================================================
 
 st.markdown(f"""
-<div class="ai-card">
+<div class="ai-box">
     <h1>{signal}</h1>
     <h2>{score}/8 AI SCORE</h2>
     <p>AI Trading Signal Engine</p>
@@ -331,7 +268,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ======================================================
-# TABLE
+# MARKET SCANNER
 # ======================================================
 
 scanner_data = []
@@ -370,22 +307,18 @@ scanner_df = scanner_df.sort_values(
     ascending=False
 )
 
-st.markdown("## 📈 Market Scanner")
-
-st.markdown('<div class="table-box">', unsafe_allow_html=True)
+st.subheader("📈 Market Scanner")
 
 st.dataframe(
     scanner_df,
     use_container_width=True
 )
 
-st.markdown('</div>', unsafe_allow_html=True)
-
 # ======================================================
-# TRADINGVIEW
+# TRADINGVIEW CHART
 # ======================================================
 
-st.markdown("## 📊 Trading Chart")
+st.subheader("📊 Trading Chart")
 
 symbol_tv = selected_stock.replace(".JK", "")
 
@@ -422,10 +355,72 @@ tv_widget = f'''
 components.html(tv_widget, height=700)
 
 # ======================================================
+# RSI + MACD
+# ======================================================
+
+left, right = st.columns(2)
+
+with left:
+
+    st.subheader("📈 RSI")
+
+    rsi_fig = go.Figure()
+
+    rsi_fig.add_trace(go.Scatter(
+        x=data.index,
+        y=data['RSI'],
+        mode='lines',
+        name='RSI'
+    ))
+
+    rsi_fig.add_hline(y=70)
+    rsi_fig.add_hline(y=30)
+
+    rsi_fig.update_layout(
+        template="plotly_white",
+        height=350
+    )
+
+    st.plotly_chart(
+        rsi_fig,
+        use_container_width=True
+    )
+
+with right:
+
+    st.subheader("🚀 MACD")
+
+    macd_fig = go.Figure()
+
+    macd_fig.add_trace(go.Scatter(
+        x=data.index,
+        y=data['MACD'],
+        mode='lines',
+        name='MACD'
+    ))
+
+    macd_fig.add_trace(go.Scatter(
+        x=data.index,
+        y=data['MACD_SIGNAL'],
+        mode='lines',
+        name='Signal'
+    ))
+
+    macd_fig.update_layout(
+        template="plotly_white",
+        height=350
+    )
+
+    st.plotly_chart(
+        macd_fig,
+        use_container_width=True
+    )
+
+# ======================================================
 # WATCHLIST
 # ======================================================
 
-st.markdown("## 🔥 Top Watchlist")
+st.subheader("🔥 Top Watchlist")
 
 for _, row in scanner_df.head(6).iterrows():
 
