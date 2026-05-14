@@ -1,4 +1,6 @@
 import streamlit as st
+import feedparser
+import requests
 import streamlit.components.v1 as components
 import pandas as pd
 from streamlit_option_menu import option_menu
