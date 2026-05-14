@@ -22,6 +22,18 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+header {
+    visibility: hidden;
+}
+
+[data-testid="stHeader"] {
+    display: none;
+}
+
+.block-container {
+    padding-top: 1rem;
+}
+
 /* MAIN BACKGROUND */
 .stApp {
     background-color: #0b1120;
