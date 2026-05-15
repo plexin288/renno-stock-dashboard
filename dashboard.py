@@ -126,9 +126,9 @@ if st.session_state.sidebar_state:
 
     with st.sidebar:
 
-          st.image("logo.png", width=180)
+         st.image("logo.png", width=180)
 
-           selected = option_menu(
+         selected = option_menu(
 
         menu_title="MENU",
 
