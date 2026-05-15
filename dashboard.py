@@ -391,6 +391,8 @@ for i, row in watchlist_df.iterrows():
 
     </div>
     """, unsafe_allow_html=True)
+
+st.write("")
     
         st.write("")
 
