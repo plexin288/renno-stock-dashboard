@@ -350,10 +350,77 @@ if selected == "Dashboard":
 
         })
 
-        st.dataframe(
-            watchlist_df,
-            use_container_width=True
-        )
+       st.markdown("""
+<style>
+
+.watchlist-card {
+
+    background: linear-gradient(
+        145deg,
+        #111827,
+        #1e293b
+    );
+
+    padding: 16px;
+
+    border-radius: 16px;
+
+    border: 1px solid #374151;
+
+    margin-bottom: 12px;
+
+    box-shadow:
+        0 0 12px rgba(139,92,246,0.10);
+
+    transition: 0.2s;
+}
+
+.watchlist-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 18px rgba(139,92,246,0.18);
+}
+
+.watchlist-stock {
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: white;
+}
+
+.watchlist-change {
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: #22c55e;
+
+    margin-top: 4px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+for i, row in watchlist_df.iterrows():
+
+    st.markdown(f'''
+    <div class="watchlist-card">
+
+        <div class="watchlist-stock">
+            {row["Stock"]}
+        </div>
+
+        <div class="watchlist-change">
+            {row["Change"]}
+        </div>
+
+    </div>
+    ''', unsafe_allow_html=True)
 
         st.write("")
 
