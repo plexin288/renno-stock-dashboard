@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import yfinance as yf
 from streamlit.components.v1 import html
 
 # =========================================================
@@ -20,7 +19,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* MAIN APP */
+/* MAIN */
 .stApp {
     background-color: #020617;
     color: white;
@@ -35,9 +34,9 @@ section[data-testid="stSidebar"] {
 /* SIDEBAR BUTTON */
 [data-testid="collapsedControl"] {
     background-color: #1e293b !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     padding: 8px !important;
-    transform: scale(1.3);
+    transform: scale(1.4);
 }
 
 [data-testid="collapsedControl"] svg {
@@ -53,20 +52,14 @@ section[data-testid="stSidebar"] {
 [data-testid="metric-container"] {
     background: linear-gradient(145deg,#111827,#1e293b);
     border: 1px solid #374151;
-    padding: 15px;
     border-radius: 18px;
+    padding: 15px;
 }
 
-/* TABLE */
+/* DATAFRAME */
 [data-testid="stDataFrame"] {
     border-radius: 16px;
     overflow: hidden;
-}
-
-/* GLOW TEXT */
-.glow {
-    color: #60a5fa;
-    font-weight: bold;
 }
 
 </style>
@@ -99,7 +92,7 @@ with st.sidebar:
     )
 
 # =========================================================
-# DASHBOARD PAGE
+# DASHBOARD
 # =========================================================
 
 if selected == "Dashboard":
@@ -110,7 +103,7 @@ if selected == "Dashboard":
     st.success("🟢 LIVE MARKET ACTIVE")
 
     # =====================================================
-    # TOP METRICS
+    # METRICS
     # =====================================================
 
     col1, col2, col3, col4 = st.columns(4)
@@ -133,7 +126,11 @@ if selected == "Dashboard":
     # CHART + WATCHLIST
     # =====================================================
 
-    left, right = st.columns([3,1])
+    left, right = st.columns([3, 1])
+
+    # =====================================================
+    # CHART
+    # =====================================================
 
     with left:
 
@@ -142,8 +139,11 @@ if selected == "Dashboard":
         tradingview_widget = """
         <div class="tradingview-widget-container">
           <div id="tradingview_chart"></div>
+
           <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
           <script type="text/javascript">
+
           new TradingView.widget(
           {
             "width": "100%",
@@ -161,11 +161,16 @@ if selected == "Dashboard":
             "container_id": "tradingview_chart"
           }
           );
+
           </script>
         </div>
         """
 
         html(tradingview_widget, height=650)
+
+    # =====================================================
+    # WATCHLIST
+    # =====================================================
 
     with right:
 
@@ -190,7 +195,7 @@ if selected == "Dashboard":
                 border-radius:16px;
                 border:1px solid #374151;
                 margin-bottom:12px;
-                box-shadow:0 0 15px rgba(0,0,0,0.25);
+                box-shadow:0 0 15px rgba(0,0,0,0.3);
             ">
 
                 <div style="
@@ -221,6 +226,10 @@ if selected == "Dashboard":
             """, unsafe_allow_html=True)
 
         st.write("")
+
+        # =================================================
+        # AI SIGNAL
+        # =================================================
 
         st.subheader("🤖 AI SIGNAL")
 
@@ -343,5 +352,3 @@ elif selected == "Settings":
     st.toggle("Dark Mode", value=True)
     st.toggle("Telegram Alert", value=True)
     st.toggle("Realtime Scanner", value=True)
-
-```
