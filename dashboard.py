@@ -21,12 +21,12 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-header {
-    visibility: hidden;
+[data-testid="stHeader"] {
+    background: transparent;
 }
 
-[data-testid="stHeader"] {
-    display: none;
+[data-testid="collapsedControl"] {
+    z-index: 999999 !important;
 }
 
 .block-container {
