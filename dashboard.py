@@ -102,6 +102,14 @@ section[data-testid="stSidebar"] {
     padding-top: 1rem;
 }
 
+[data-testid="collapsedControl"] {
+
+    transform: scale(1.15);
+
+    background-color: rgba(255,255,255,0.12) !important;
+
+    border-radius: 12px;
+
 </style>
 """, unsafe_allow_html=True)
 
