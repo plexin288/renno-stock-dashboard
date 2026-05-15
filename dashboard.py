@@ -122,6 +122,8 @@ if toggle:
 # SIDEBAR
 # =========================================================
 
+selected = "Dashboard"
+
 if st.session_state.sidebar_state:
 
     with st.sidebar:
