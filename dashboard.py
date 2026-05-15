@@ -12,7 +12,6 @@ from streamlit_option_menu import option_menu
 st.set_page_config(
     page_title="RENNO TERMINAL",
     layout="wide",
-    initial_sidebar_state="expanded"
 )
 
 # =========================================================
@@ -106,10 +105,26 @@ section[data-testid="stSidebar"] {
 """, unsafe_allow_html=True)
 
 # =========================================================
+# SIDEBAR TOGGLE FIX
+# =========================================================
+
+if "sidebar_state" not in st.session_state:
+    st.session_state.sidebar_state = True
+
+toggle = st.button("☰")
+
+if toggle:
+    st.session_state.sidebar_state = (
+        not st.session_state.sidebar_state
+    )
+
+# =========================================================
 # SIDEBAR
 # =========================================================
 
-with st.sidebar:
+if st.session_state.sidebar_state:
+
+    with st.sidebar:
 
     st.image("logo.png", width=180)
 
