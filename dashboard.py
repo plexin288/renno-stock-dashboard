@@ -383,21 +383,21 @@ if selected == "Dashboard":
 
         for i, row in watchlist_df.iterrows():
 
-    st.markdown(
-        f"""
-        <div class="watchlist-card">
+            st.markdown(
+               f"""
+               <div class="watchlist-card">
 
-            <div class="watchlist-stock">
-                {row['Stock']}
-            </div>
+                   <div class="watchlist-stock">
+                       {row['Stock']}
+                  </div>
 
-            <div class="watchlist-change">
-                {row['Change']}
-            </div>
+                  <div class="watchlist-change">
+                      {row['Change']}
+                 </div>
 
-        </div>
-        """,
-        unsafe_allow_html=True
+             </div>
+             """,
+             unsafe_allow_html=True
     )
     
         st.write("")
