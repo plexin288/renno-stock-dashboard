@@ -393,24 +393,22 @@ for i, row in watchlist_df.iterrows():
     """, unsafe_allow_html=True)
 
 st.write("")
-    
-        st.write("")
 
-        st.subheader("🤖 AI SIGNAL")
+st.subheader("🤖 AI SIGNAL")
 
-        st.metric(
-            "AI SCORE",
-            "8/10"
-        )
+st.metric(
+    "AI SCORE",
+    "8/10"
+)
 
-        st.success("🚀 STRONG BUY")
+st.success("🚀 STRONG BUY")
 
-        st.write("")
+st.write("")
 
-        st.write("✅ MACD Bullish")
-        st.write("✅ RSI Healthy")
-        st.write("✅ Volume Surge")
-        st.write("✅ Price Above MA20")
+st.write("✅ MACD Bullish")
+st.write("✅ RSI Healthy")
+st.write("✅ Volume Surge")
+st.write("✅ Price Above MA20")
 
 # =========================================================
 # OTHER PAGES
