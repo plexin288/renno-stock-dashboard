@@ -350,11 +350,10 @@ if selected == "Dashboard":
 
         })
 
-              st.markdown("""
+        st.markdown("""
         <style>
 
         .watchlist-card {
-
             background: linear-gradient(
                 145deg,
                 #111827,
@@ -362,34 +361,41 @@ if selected == "Dashboard":
             );
 
             padding: 16px;
-
             border-radius: 16px;
-
             border: 1px solid #374151;
-
             margin-bottom: 12px;
         }
 
         .watchlist-stock {
-
             font-size: 18px;
-
             font-weight: bold;
-
             color: white;
         }
 
         .watchlist-change {
-
             font-size: 15px;
-
             font-weight: bold;
-
             color: #22c55e;
         }
 
         </style>
         """, unsafe_allow_html=True)
+
+        for i, row in watchlist_df.iterrows():
+
+            st.markdown(f"""
+            <div class="watchlist-card">
+
+                <div class="watchlist-stock">
+                    {row['Stock']}
+                </div>
+
+                <div class="watchlist-change">
+                    {row['Change']}
+                </div>
+
+            </div>
+            """, unsafe_allow_html=True)
 
         for i, row in watchlist_df.iterrows():
 
