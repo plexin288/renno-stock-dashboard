@@ -350,55 +350,47 @@ if selected == "Dashboard":
 
         })
 
-        st.markdown("""
-        <style>
+       # WATCHLIST
+st.subheader("🔥 WATCHLIST")
 
-        .watchlist-card {
-            background: linear-gradient(
-                145deg,
-                #111827,
-                #1e293b
-            );
+watchlist_df = pd.DataFrame({
+    "Stock": ["BBRI", "BMRI", "TLKM", "ANTM", "GOTO"],
+    "Change": ["+1.21%", "+3.11%", "-0.51%", "+5.22%", "+7.11%"]
+})
 
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid #374151;
-            margin-bottom: 12px;
-        }
+for i, row in watchlist_df.iterrows():
 
-        .watchlist-stock {
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-        }
+    stock = row["Stock"]
+    change = row["Change"]
 
-        .watchlist-change {
-            font-size: 15px;
-            font-weight: bold;
-            color: #22c55e;
-        }
+    st.markdown(f"""
+    <div style="
+        background: linear-gradient(145deg,#111827,#1e293b);
+        padding:16px;
+        border-radius:16px;
+        border:1px solid #374151;
+        margin-bottom:12px;
+    ">
 
-        </style>
-        """, unsafe_allow_html=True)
+        <div style="
+            font-size:18px;
+            font-weight:bold;
+            color:white;
+        ">
+            {stock}
+        </div>
 
-        for i, row in watchlist_df.iterrows():
+        <div style="
+            font-size:15px;
+            font-weight:bold;
+            color:#22c55e;
+            margin-top:4px;
+        ">
+            {change}
+        </div>
 
-            st.markdown(
-               f"""
-               <div class="watchlist-card">
-
-                   <div class="watchlist-stock">
-                       {row['Stock']}
-                  </div>
-
-                  <div class="watchlist-change">
-                      {row['Change']}
-                 </div>
-
-             </div>
-             """,
-             unsafe_allow_html=True
-    )
+    </div>
+    """, unsafe_allow_html=True)
     
         st.write("")
 
