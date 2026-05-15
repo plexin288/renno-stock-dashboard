@@ -111,11 +111,11 @@ section[data-testid="stSidebar"] {
 
 selected = "Dashboard"
 
-    with st.sidebar:
-    
-         st.image("logo.png", width=180)
+with st.sidebar:
 
-         selected = option_menu(
+    st.image("logo.png", width=180)
+
+    selected = option_menu(
 
         menu_title="MENU",
 
