@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 from streamlit.components.v1 import html
 
-# =========================================================
+# =====================================================
 # PAGE CONFIG
-# =========================================================
+# =====================================================
 
 st.set_page_config(
     page_title="RENNO STOCK TERMINAL",
@@ -12,9 +12,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# =========================================================
+# =====================================================
 # CUSTOM CSS
-# =========================================================
+# =====================================================
 
 st.markdown("""
 <style>
@@ -23,6 +23,11 @@ st.markdown("""
 .stApp {
     background-color: #020617;
     color: white;
+}
+
+/* REMOVE TOP SPACE */
+.block-container {
+    padding-top: 1rem;
 }
 
 /* SIDEBAR */
@@ -43,11 +48,6 @@ section[data-testid="stSidebar"] {
     color: #60a5fa !important;
 }
 
-/* REMOVE TOP SPACE */
-.block-container {
-    padding-top: 1rem;
-}
-
 /* METRIC CARD */
 [data-testid="metric-container"] {
     background: linear-gradient(145deg,#111827,#1e293b);
@@ -56,7 +56,7 @@ section[data-testid="stSidebar"] {
     padding: 15px;
 }
 
-/* DATAFRAME */
+/* TABLE */
 [data-testid="stDataFrame"] {
     border-radius: 16px;
     overflow: hidden;
@@ -65,9 +65,9 @@ section[data-testid="stSidebar"] {
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
+# =====================================================
 # SIDEBAR
-# =========================================================
+# =====================================================
 
 with st.sidebar:
 
@@ -91,9 +91,9 @@ with st.sidebar:
         ]
     )
 
-# =========================================================
+# =====================================================
 # DASHBOARD
-# =========================================================
+# =====================================================
 
 if selected == "Dashboard":
 
@@ -102,9 +102,9 @@ if selected == "Dashboard":
 
     st.success("🟢 LIVE MARKET ACTIVE")
 
-    # =====================================================
-    # METRICS
-    # =====================================================
+    # =================================================
+    # METRIC
+    # =================================================
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -122,15 +122,15 @@ if selected == "Dashboard":
 
     st.write("")
 
-    # =====================================================
+    # =================================================
     # CHART + WATCHLIST
-    # =====================================================
+    # =================================================
 
-    left, right = st.columns([3, 1])
+    left, right = st.columns([3,1])
 
-    # =====================================================
+    # =================================================
     # CHART
-    # =====================================================
+    # =================================================
 
     with left:
 
@@ -138,6 +138,7 @@ if selected == "Dashboard":
 
         tradingview_widget = """
         <div class="tradingview-widget-container">
+
           <div id="tradingview_chart"></div>
 
           <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -163,14 +164,15 @@ if selected == "Dashboard":
           );
 
           </script>
+
         </div>
         """
 
         html(tradingview_widget, height=650)
 
-    # =====================================================
+    # =================================================
     # WATCHLIST
-    # =====================================================
+    # =================================================
 
     with right:
 
@@ -188,14 +190,14 @@ if selected == "Dashboard":
 
             color = "#22c55e" if "+" in change else "#ef4444"
 
-            st.markdown(f"""
+            card_html = f'''
             <div style="
                 background: linear-gradient(145deg,#111827,#1e293b);
                 padding:16px;
                 border-radius:16px;
                 border:1px solid #374151;
                 margin-bottom:12px;
-                box-shadow:0 0 15px rgba(0,0,0,0.3);
+                box-shadow:0 0 15px rgba(0,0,0,0.25);
             ">
 
                 <div style="
@@ -223,13 +225,15 @@ if selected == "Dashboard":
                 </div>
 
             </div>
-            """, unsafe_allow_html=True)
+            '''
+
+            st.markdown(card_html, unsafe_allow_html=True)
 
         st.write("")
 
-        # =================================================
+        # =============================================
         # AI SIGNAL
-        # =================================================
+        # =============================================
 
         st.subheader("🤖 AI SIGNAL")
 
@@ -247,9 +251,9 @@ if selected == "Dashboard":
 
     st.write("")
 
-    # =====================================================
+    # =================================================
     # MARKET SCANNER TABLE
-    # =====================================================
+    # =================================================
 
     st.subheader("📋 MARKET SCANNER")
 
@@ -262,9 +266,9 @@ if selected == "Dashboard":
 
     st.dataframe(scanner_df, use_container_width=True)
 
-# =========================================================
+# =====================================================
 # MARKET SCANNER PAGE
-# =========================================================
+# =====================================================
 
 elif selected == "Market Scanner":
 
@@ -279,25 +283,19 @@ elif selected == "Market Scanner":
 
     st.dataframe(scanner_df, use_container_width=True)
 
-# =========================================================
+# =====================================================
 # WATCHLIST PAGE
-# =========================================================
+# =====================================================
 
 elif selected == "Watchlist":
 
     st.title("🔥 Watchlist")
 
-    watch_df = pd.DataFrame({
-        "Stock": ["BBRI", "BMRI", "TLKM", "ANTM", "GOTO"],
-        "Target": [5600, 7000, 4100, 2400, 110],
-        "Status": ["Bullish", "Bullish", "Neutral", "Bullish", "Speculative"]
-    })
+    st.info("Custom Watchlist Coming Soon")
 
-    st.dataframe(watch_df, use_container_width=True)
-
-# =========================================================
+# =====================================================
 # AI SIGNAL PAGE
-# =========================================================
+# =====================================================
 
 elif selected == "AI Signal":
 
@@ -307,31 +305,19 @@ elif selected == "AI Signal":
 
     st.success("Top Signal Today: BBRI")
 
-    st.write("✅ Breakout Valid")
-    st.write("✅ MACD Bullish")
-    st.write("✅ MA20 > MA50")
-    st.write("✅ Volume Surge")
-
-# =========================================================
+# =====================================================
 # PORTFOLIO PAGE
-# =========================================================
+# =====================================================
 
 elif selected == "Portfolio":
 
     st.title("💼 Portfolio")
 
-    portfolio_df = pd.DataFrame({
-        "Stock": ["BBCA", "BBRI", "BMRI"],
-        "Lot": [10, 15, 12],
-        "Avg Buy": [8900, 4700, 5900],
-        "Current": [9250, 5100, 6450]
-    })
+    st.info("Portfolio Tracker Coming Soon")
 
-    st.dataframe(portfolio_df, use_container_width=True)
-
-# =========================================================
+# =====================================================
 # NEWS PAGE
-# =========================================================
+# =====================================================
 
 elif selected == "News":
 
@@ -341,9 +327,9 @@ elif selected == "News":
     st.info("Foreign flow returns to IDX banking sector")
     st.info("Coal sector gains momentum this week")
 
-# =========================================================
+# =====================================================
 # SETTINGS PAGE
-# =========================================================
+# =====================================================
 
 elif selected == "Settings":
 
