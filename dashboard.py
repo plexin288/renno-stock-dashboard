@@ -1,16 +1,14 @@
 import streamlit as st
-import feedparser
-import requests
-import streamlit.components.v1 as components
 import pandas as pd
-from streamlit_option_menu import option_menu
+import yfinance as yf
+from streamlit.components.v1 import html
 
 # =========================================================
 # PAGE CONFIG
 # =========================================================
 
 st.set_page_config(
-    page_title="RENNO TERMINAL",
+    page_title="RENNO STOCK TERMINAL",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -22,79 +20,28 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-[data-testid="stHeader"] {
-    background: transparent;
-}
-
-[data-testid="collapsedControl"] {
-    z-index: 999999 !important;
-}
-
-.block-container {
-    padding-top: 1rem;
-}
-
-/* MAIN BACKGROUND */
+/* MAIN APP */
 .stApp {
-    background-color: #0b1120;
+    background-color: #020617;
     color: white;
 }
 
 /* SIDEBAR */
 section[data-testid="stSidebar"] {
-    background-color: #111827;
-    border-right: 1px solid #1f2937;
+    background: linear-gradient(180deg, #0f172a, #111827);
+    border-right: 1px solid #1e293b;
 }
 
-/* METRIC CARD */
-[data-testid="metric-container"] {
-
-    background: linear-gradient(
-        135deg,
-        #111827,
-        #1e293b
-    );
-
-    border: 1px solid #374151;
-
-    padding: 18px;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 0 15px rgba(59,130,246,0.15);
+/* SIDEBAR BUTTON */
+[data-testid="collapsedControl"] {
+    background-color: #1e293b !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+    transform: scale(1.3);
 }
 
-/* DATAFRAME */
-[data-testid="stDataFrame"] {
-    border-radius: 18px;
-    overflow: hidden;
-}
-
-/* TITLE */
-.big-title {
-
-    font-size: 50px;
-
-    font-weight: 800;
-
-    color: white;
-}
-
-/* SUBTITLE */
-.sub-title {
-
-    color: #9ca3af;
-
-    font-size: 18px;
-}
-
-/* GLOW */
-.glow {
-
-    color: #8b5cf6;
-
-    font-weight: bold;
+[data-testid="collapsedControl"] svg {
+    color: #60a5fa !important;
 }
 
 /* REMOVE TOP SPACE */
@@ -102,13 +49,25 @@ section[data-testid="stSidebar"] {
     padding-top: 1rem;
 }
 
-[data-testid="collapsedControl"] {
+/* METRIC CARD */
+[data-testid="metric-container"] {
+    background: linear-gradient(145deg,#111827,#1e293b);
+    border: 1px solid #374151;
+    padding: 15px;
+    border-radius: 18px;
+}
 
-    transform: scale(1.15);
+/* TABLE */
+[data-testid="stDataFrame"] {
+    border-radius: 16px;
+    overflow: hidden;
+}
 
-    background-color: rgba(255,255,255,0.12) !important;
-
-    border-radius: 12px;
+/* GLOW TEXT */
+.glow {
+    color: #60a5fa;
+    font-weight: bold;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -117,94 +76,42 @@ section[data-testid="stSidebar"] {
 # SIDEBAR
 # =========================================================
 
-selected = "Dashboard"
-
 with st.sidebar:
 
-    st.image("logo.png", width=180)
+    st.image(
+        "https://cdn-icons-png.flaticon.com/512/2103/2103633.png",
+        width=120
+    )
 
-    selected = option_menu(
+    st.markdown("## 🚀 MENU")
 
-        menu_title="MENU",
-
-        options=[
+    selected = st.radio(
+        "",
+        [
             "Dashboard",
             "Market Scanner",
             "Watchlist",
             "AI Signal",
-            "News",
             "Portfolio",
+            "News",
             "Settings"
-        ],
-
-        icons=[
-            "house",
-            "bar-chart",
-            "star",
-            "robot",
-            "newspaper",
-            "briefcase",
-            "gear"
-        ],
-
-        menu_icon="rocket",
-
-        default_index=0,
-
-        styles={
-
-            "container": {
-                "padding": "0!important",
-                "background-color": "#111827",
-            },
-
-            "icon": {
-                "color": "#8b5cf6",
-                "font-size": "18px"
-            },
-
-            "nav-link": {
-
-                "font-size": "16px",
-
-                "text-align": "left",
-
-                "margin": "8px",
-
-                "--hover-color": "#1e293b",
-
-                "border-radius": "12px",
-
-                "color": "white",
-            },
-
-            "nav-link-selected": {
-
-                "background":
-                "linear-gradient(135deg,#7c3aed,#4f46e5)",
-
-                "font-weight": "bold",
-            },
-        }
+        ]
     )
 
 # =========================================================
-# DASHBOARD
+# DASHBOARD PAGE
 # =========================================================
 
 if selected == "Dashboard":
 
-    # HEADER
-
     st.title("RENNO STOCK TERMINAL")
-
     st.caption("Premium AI Powered IDX Dashboard")
 
     st.success("🟢 LIVE MARKET ACTIVE")
 
-    st.write("")
-
-    # METRICS
+    # =====================================================
+    # TOP METRICS
+    # =====================================================
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -222,389 +129,219 @@ if selected == "Dashboard":
 
     st.write("")
 
-    # MAIN SECTION
+    # =====================================================
+    # CHART + WATCHLIST
+    # =====================================================
 
-    left, right = st.columns([2.2, 1])
-
-    # LEFT
+    left, right = st.columns([3,1])
 
     with left:
 
         st.subheader("📈 TradingView Chart")
 
-        tradingview_chart = """
+        tradingview_widget = """
         <div class="tradingview-widget-container">
           <div id="tradingview_chart"></div>
-
-          <script type="text/javascript"
-          src="https://s3.tradingview.com/tv.js">
-          </script>
-
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
           <script type="text/javascript">
-
-          new TradingView.widget({
-
+          new TradingView.widget(
+          {
             "width": "100%",
-            "height": 600,
-
+            "height": 620,
             "symbol": "IDX:BBCA",
-
             "interval": "D",
-
             "timezone": "Asia/Jakarta",
-
             "theme": "dark",
-
             "style": "1",
-
             "locale": "id",
-
-            "toolbar_bg": "#0b1120",
-
+            "toolbar_bg": "#0f172a",
             "enable_publishing": false,
-
-            "allow_symbol_change": true,
-
+            "hide_top_toolbar": false,
+            "save_image": false,
             "container_id": "tradingview_chart"
-
-          });
-
+          }
+          );
           </script>
-
         </div>
         """
 
-        components.html(
-            tradingview_chart,
-            height=600
-        )
-
-        st.write("")
-
-        st.subheader("📋 MARKET SCANNER")
-
-        scanner_df = pd.DataFrame({
-
-            "Stock": [
-                "BBCA",
-                "BMRI",
-                "BBRI",
-                "TLKM",
-                "ANTM"
-            ],
-
-            "Price": [
-                9250,
-                6450,
-                4850,
-                3200,
-                1620
-            ],
-
-            "Change": [
-                "+2.41%",
-                "+3.11%",
-                "+1.21%",
-                "-0.51%",
-                "+5.22%"
-            ],
-
-            "Trend": [
-                "Bullish",
-                "Bullish",
-                "Bullish",
-                "Bearish",
-                "Bullish"
-            ]
-
-        })
-
-        st.dataframe(
-            scanner_df,
-            use_container_width=True
-        )
-
-    # RIGHT
+        html(tradingview_widget, height=650)
 
     with right:
 
         st.subheader("🔥 WATCHLIST")
 
         watchlist_df = pd.DataFrame({
-
-            "Stock": [
-                "BBRI",
-                "BMRI",
-                "TLKM",
-                "ANTM",
-                "GOTO"
-            ],
-
-            "Change": [
-                "+1.21%",
-                "+3.11%",
-                "-0.51%",
-                "+5.22%",
-                "+7.11%"
-            ]
-
+            "Stock": ["BBRI", "BMRI", "TLKM", "ANTM", "GOTO"],
+            "Change": ["+1.21%", "+3.11%", "-0.51%", "+5.22%", "+7.11%"]
         })
 
-       # WATCHLIST
-st.subheader("🔥 WATCHLIST")
+        for i, row in watchlist_df.iterrows():
 
-watchlist_df = pd.DataFrame({
-    "Stock": ["BBRI", "BMRI", "TLKM", "ANTM", "GOTO"],
-    "Change": ["+1.21%", "+3.11%", "-0.51%", "+5.22%", "+7.11%"]
-})
+            stock = row["Stock"]
+            change = row["Change"]
 
-for i, row in watchlist_df.iterrows():
+            color = "#22c55e" if "+" in change else "#ef4444"
 
-    stock = row["Stock"]
-    change = row["Change"]
+            st.markdown(f"""
+            <div style="
+                background: linear-gradient(145deg,#111827,#1e293b);
+                padding:16px;
+                border-radius:16px;
+                border:1px solid #374151;
+                margin-bottom:12px;
+                box-shadow:0 0 15px rgba(0,0,0,0.25);
+            ">
 
-    st.markdown(f"""
-    <div style="
-        background: linear-gradient(145deg,#111827,#1e293b);
-        padding:16px;
-        border-radius:16px;
-        border:1px solid #374151;
-        margin-bottom:12px;
-    ">
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                ">
 
-        <div style="
-            font-size:18px;
-            font-weight:bold;
-            color:white;
-        ">
-            {stock}
-        </div>
+                    <div style="
+                        font-size:18px;
+                        font-weight:bold;
+                        color:white;
+                    ">
+                        {stock}
+                    </div>
 
-        <div style="
-            font-size:15px;
-            font-weight:bold;
-            color:#22c55e;
-            margin-top:4px;
-        ">
-            {change}
-        </div>
+                    <div style="
+                        font-size:15px;
+                        font-weight:bold;
+                        color:{color};
+                    ">
+                        {change}
+                    </div>
 
-    </div>
-    """, unsafe_allow_html=True)
+                </div>
 
-st.write("")
+            </div>
+            """, unsafe_allow_html=True)
 
-st.subheader("🤖 AI SIGNAL")
+        st.write("")
 
-st.metric(
-    "AI SCORE",
-    "8/10"
-)
+        st.subheader("🤖 AI SIGNAL")
 
-st.success("🚀 STRONG BUY")
+        st.metric(
+            "AI SCORE",
+            "8/10"
+        )
 
-st.write("")
+        st.success("🚀 STRONG BUY")
 
-st.write("✅ MACD Bullish")
-st.write("✅ RSI Healthy")
-st.write("✅ Volume Surge")
-st.write("✅ Price Above MA20")
+        st.write("✅ MACD Bullish")
+        st.write("✅ RSI Healthy")
+        st.write("✅ Volume Surge")
+        st.write("✅ Price Above MA20")
+
+    st.write("")
+
+    # =====================================================
+    # MARKET SCANNER TABLE
+    # =====================================================
+
+    st.subheader("📋 MARKET SCANNER")
+
+    scanner_df = pd.DataFrame({
+        "Stock": ["BBCA", "BBRI", "BMRI", "TLKM", "ASII"],
+        "Price": [9250, 5100, 6450, 3820, 4900],
+        "Change": ["+2.41%", "+1.11%", "+0.91%", "-0.31%", "+1.44%"],
+        "Trend": ["Bullish", "Bullish", "Bullish", "Neutral", "Bullish"]
+    })
+
+    st.dataframe(scanner_df, use_container_width=True)
 
 # =========================================================
-# OTHER PAGES
+# MARKET SCANNER PAGE
 # =========================================================
 
 elif selected == "Market Scanner":
 
     st.title("📈 Market Scanner")
 
-    st.write("Realtime IDX Stock Scanner")
-
     scanner_df = pd.DataFrame({
-
-        "Stock": [
-            "BBCA",
-            "BMRI",
-            "BBRI",
-            "TLKM",
-            "ASII",
-            "ANTM",
-            "GOTO"
-        ],
-
-        "Price": [
-            9250,
-            6450,
-            4850,
-            3200,
-            5150,
-            1620,
-            89
-        ],
-
-        "Change": [
-            "+2.41%",
-            "+3.11%",
-            "+1.21%",
-            "-0.51%",
-            "+0.87%",
-            "+5.22%",
-            "+7.11%"
-        ],
-
-        "Trend": [
-            "Bullish",
-            "Bullish",
-            "Bullish",
-            "Bearish",
-            "Bullish",
-            "Bullish",
-            "Bullish"
-        ],
-
-        "Volume": [
-            "12.45M",
-            "15.21M",
-            "18.32M",
-            "25.11M",
-            "8.12M",
-            "22.17M",
-            "55.61M"
-        ],
-
-        "Value": [
-            "1.15T",
-            "980B",
-            "892B",
-            "803B",
-            "211B",
-            "356B",
-            "510B"
-        ]
-
+        "Stock": ["BBCA", "BBRI", "BMRI", "TLKM", "ASII", "ANTM", "GOTO"],
+        "Signal": ["BUY", "BUY", "BUY", "HOLD", "BUY", "BUY", "SPEC BUY"],
+        "RSI": [61, 58, 64, 49, 60, 72, 77],
+        "Volume": ["2.1x", "1.7x", "2.9x", "0.8x", "1.5x", "3.4x", "4.2x"]
     })
 
-    st.dataframe(
-        scanner_df,
-        use_container_width=True
-    )
+    st.dataframe(scanner_df, use_container_width=True)
 
-    st.write("")
-
-    st.subheader("🔥 Top Gainers")
-
-    gainers_df = pd.DataFrame({
-
-        "Stock": [
-            "GOTO",
-            "ANTM",
-            "BMRI"
-        ],
-
-        "Change": [
-            "+7.11%",
-            "+5.22%",
-            "+3.11%"
-        ]
-
-    })
-
-    st.dataframe(
-        gainers_df,
-        use_container_width=True
-    )
-
-    st.write("")
-
-    st.subheader("📉 Top Losers")
-
-    losers_df = pd.DataFrame({
-
-        "Stock": [
-            "TLKM",
-            "UNVR",
-            "ICBP"
-        ],
-
-        "Change": [
-            "-0.51%",
-            "-1.12%",
-            "-0.77%"
-        ]
-
-    })
-
-    st.dataframe(
-        losers_df,
-        use_container_width=True
-    )
+# =========================================================
+# WATCHLIST PAGE
+# =========================================================
 
 elif selected == "Watchlist":
 
     st.title("🔥 Watchlist")
 
+    watch_df = pd.DataFrame({
+        "Stock": ["BBRI", "BMRI", "TLKM", "ANTM", "GOTO"],
+        "Target": [5600, 7000, 4100, 2400, 110],
+        "Status": ["Bullish", "Bullish", "Neutral", "Bullish", "Speculative"]
+    })
+
+    st.dataframe(watch_df, use_container_width=True)
+
+# =========================================================
+# AI SIGNAL PAGE
+# =========================================================
+
 elif selected == "AI Signal":
 
     st.title("🤖 AI Signal")
 
-elif selected == "News":
+    st.metric("Average AI Score", "8.4/10")
 
-    st.title("📰 Market News")
+    st.success("Top Signal Today: BBRI")
 
-    st.write("Berita market terbaru hari ini")
+    st.write("✅ Breakout Valid")
+    st.write("✅ MACD Bullish")
+    st.write("✅ MA20 > MA50")
+    st.write("✅ Volume Surge")
 
-    # ======================================
-    # RSS NEWS
-    # ======================================
-
-    rss_url = "https://www.cnbcindonesia.com/market/rss"
-
-    feed = feedparser.parse(rss_url)
-
-    for entry in feed.entries[:10]:
-
-        st.subheader(entry.title)
-
-        st.caption(entry.published)
-
-        st.write(entry.link)
-
-        st.divider()
-
-    # ======================================
-    # MARKET UPDATE
-    # ======================================
-
-    st.subheader("📊 Market Update")
-
-    market_data = {
-
-        "Asset": [
-            "IHSG",
-            "NASDAQ",
-            "S&P500",
-            "BTC",
-            "GOLD"
-        ],
-
-        "Change": [
-            "+1.22%",
-            "+0.88%",
-            "+0.74%",
-            "+2.51%",
-            "-0.12%"
-        ]
-    }
-
-    st.dataframe(
-        market_data,
-        use_container_width=True
-    )
+# =========================================================
+# PORTFOLIO PAGE
+# =========================================================
 
 elif selected == "Portfolio":
 
     st.title("💼 Portfolio")
 
+    portfolio_df = pd.DataFrame({
+        "Stock": ["BBCA", "BBRI", "BMRI"],
+        "Lot": [10, 15, 12],
+        "Avg Buy": [8900, 4700, 5900],
+        "Current": [9250, 5100, 6450]
+    })
+
+    st.dataframe(portfolio_df, use_container_width=True)
+
+# =========================================================
+# NEWS PAGE
+# =========================================================
+
+elif selected == "News":
+
+    st.title("📰 Market News")
+
+    st.info("BBCA reports strong quarterly earnings")
+    st.info("Foreign flow returns to IDX banking sector")
+    st.info("Coal sector gains momentum this week")
+
+# =========================================================
+# SETTINGS PAGE
+# =========================================================
+
 elif selected == "Settings":
 
-    st.title("⚙ Settings")
+    st.title("⚙️ Settings")
+
+    st.toggle("Dark Mode", value=True)
+    st.toggle("Telegram Alert", value=True)
+    st.toggle("Realtime Scanner", value=True)
+
+```
