@@ -350,63 +350,62 @@ if selected == "Dashboard":
 
         })
 
-      st.markdown("""
-     <style>
+              st.markdown("""
+        <style>
 
-.watchlist-card {
+        .watchlist-card {
 
-    background: linear-gradient(
-        145deg,
-        #111827,
-        #1e293b
-    );
+            background: linear-gradient(
+                145deg,
+                #111827,
+                #1e293b
+            );
 
-    padding: 16px;
+            padding: 16px;
 
-    border-radius: 16px;
+            border-radius: 16px;
 
-    border: 1px solid #374151;
+            border: 1px solid #374151;
 
-    margin-bottom: 12px;
+            margin-bottom: 12px;
+        }
 
-}
+        .watchlist-stock {
 
-.watchlist-stock {
+            font-size: 18px;
 
-    font-size: 18px;
+            font-weight: bold;
 
-    font-weight: bold;
+            color: white;
+        }
 
-    color: white;
-}
+        .watchlist-change {
 
-.watchlist-change {
+            font-size: 15px;
 
-    font-size: 15px;
+            font-weight: bold;
 
-    font-weight: bold;
+            color: #22c55e;
+        }
 
-    color: #22c55e;
-}
+        </style>
+        """, unsafe_allow_html=True)
 
-</style>
-""", unsafe_allow_html=True)
+        for i, row in watchlist_df.iterrows():
 
-for i, row in watchlist_df.iterrows():
+            st.markdown(f"""
+            <div class="watchlist-card">
 
-    st.markdown(f"""
-    <div class="watchlist-card">
+                <div class="watchlist-stock">
+                    {row['Stock']}
+                </div>
 
-        <div class="watchlist-stock">
-            {row['Stock']}
-        </div>
+                <div class="watchlist-change">
+                    {row['Change']}
+                </div>
 
-        <div class="watchlist-change">
-            {row['Change']}
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
 
         st.write("")
 
