@@ -350,8 +350,8 @@ if selected == "Dashboard":
 
         })
 
-       st.markdown("""
-<style>
+      st.markdown("""
+     <style>
 
 .watchlist-card {
 
@@ -369,25 +369,13 @@ if selected == "Dashboard":
 
     margin-bottom: 12px;
 
-    box-shadow:
-        0 0 12px rgba(139,92,246,0.10);
-
-    transition: 0.2s;
-}
-
-.watchlist-card:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 0 18px rgba(139,92,246,0.18);
 }
 
 .watchlist-stock {
 
     font-size: 18px;
 
-    font-weight: 700;
+    font-weight: bold;
 
     color: white;
 }
@@ -399,8 +387,6 @@ if selected == "Dashboard":
     font-weight: bold;
 
     color: #22c55e;
-
-    margin-top: 4px;
 }
 
 </style>
@@ -408,19 +394,19 @@ if selected == "Dashboard":
 
 for i, row in watchlist_df.iterrows():
 
-    st.markdown(f'''
+    st.markdown(f"""
     <div class="watchlist-card">
 
         <div class="watchlist-stock">
-            {row["Stock"]}
+            {row['Stock']}
         </div>
 
         <div class="watchlist-change">
-            {row["Change"]}
+            {row['Change']}
         </div>
 
     </div>
-    ''', unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
         st.write("")
 
