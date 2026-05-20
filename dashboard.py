@@ -34,6 +34,14 @@ html, body, [class*="css"]  {
     color: white;
 }
 
+header {
+    visibility: hidden;
+}
+
+[data-testid="stToolbar"] {
+    display: none;
+}
+
 /* REMOVE TOP SPACE */
 .block-container {
     padding-top: 1rem;
