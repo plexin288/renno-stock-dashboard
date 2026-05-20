@@ -125,17 +125,57 @@ if selected == "Dashboard":
 
     col1, col2, col3, col4 = st.columns(4)
 
-    with col1:
-        st.metric("STOCK", "BBCA")
+with col1:
+    st.markdown("""
+    <div style="
+        background:rgba(34,197,94,0.08);
+        border:1px solid #22c55e;
+        padding:20px;
+        border-radius:18px;
+    ">
+        <p style="color:#9ca3af;">STOCK</p>
+        <h1 style="color:#22c55e;">BBCA</h1>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with col2:
-        st.metric("PRICE", "9,250")
+with col2:
+    st.markdown("""
+    <div style="
+        background:rgba(34,197,94,0.08);
+        border:1px solid #22c55e;
+        padding:20px;
+        border-radius:18px;
+    ">
+        <p style="color:#9ca3af;">PRICE</p>
+        <h1 style="color:#22c55e;">9,250</h1>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with col3:
-        st.metric("CHANGE", "+2.41%")
+with col3:
+    st.markdown("""
+    <div style="
+        background:rgba(34,197,94,0.08);
+        border:1px solid #22c55e;
+        padding:20px;
+        border-radius:18px;
+    ">
+        <p style="color:#9ca3af;">CHANGE</p>
+        <h1 style="color:#22c55e;">+2.41%</h1>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with col4:
-        st.metric("TREND", "Bullish")
+with col4:
+    st.markdown("""
+    <div style="
+        background:rgba(34,197,94,0.08);
+        border:1px solid #22c55e;
+        padding:20px;
+        border-radius:18px;
+    ">
+        <p style="color:#9ca3af;">TREND</p>
+        <h1 style="color:#22c55e;">Bullish</h1>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.write("")
 
