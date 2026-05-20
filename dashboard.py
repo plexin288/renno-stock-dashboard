@@ -119,85 +119,64 @@ if selected == "Dashboard":
 
     st.success("🟢 LIVE MARKET ACTIVE")
 
-# ============================================
+# =================================================
 # METRIC
-# ============================================
+# =================================================
 
 col1, col2, col3, col4 = st.columns(4)
 
-card_style = """
-background:#111827;
-border:1px solid #22c55e;
-padding:25px;
-border-radius:18px;
-box-shadow:0 0 20px rgba(34,197,94,0.25);
+metric_style = """
+<style>
+.metric-card {
+    background: #111827;
+    border: 1px solid #22c55e;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 0 20px rgba(34,197,94,0.25);
+}
+.metric-title {
+    color: #9ca3af;
+    font-size: 14px;
+}
+.metric-value {
+    color: #22c55e;
+    font-size: 42px;
+    font-weight: bold;
+}
+</style>
 """
 
-with col1:
-    st.markdown(f"""
-    <div style="{card_style}">
-        <div style="color:#9ca3af;font-size:14px;">
-            STOCK
-        </div>
+st.markdown(metric_style, unsafe_allow_html=True)
 
-        <div style="
-            color:#22c55e;
-            font-size:42px;
-            font-weight:bold;
-        ">
-            BBCA
-        </div>
+with col1:
+    st.markdown("""
+    <div class="metric-card">
+        <div class="metric-title">STOCK</div>
+        <div class="metric-value">BBCA</div>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
-    st.markdown(f"""
-    <div style="{card_style}">
-        <div style="color:#9ca3af;font-size:14px;">
-            PRICE
-        </div>
-
-        <div style="
-            color:#22c55e;
-            font-size:42px;
-            font-weight:bold;
-        ">
-            9,250
-        </div>
+    st.markdown("""
+    <div class="metric-card">
+        <div class="metric-title">PRICE</div>
+        <div class="metric-value">9,250</div>
     </div>
     """, unsafe_allow_html=True)
 
 with col3:
-    st.markdown(f"""
-    <div style="{card_style}">
-        <div style="color:#9ca3af;font-size:14px;">
-            CHANGE
-        </div>
-
-        <div style="
-            color:#22c55e;
-            font-size:42px;
-            font-weight:bold;
-        ">
-            +2.41%
-        </div>
+    st.markdown("""
+    <div class="metric-card">
+        <div class="metric-title">CHANGE</div>
+        <div class="metric-value">+2.41%</div>
     </div>
     """, unsafe_allow_html=True)
 
 with col4:
-    st.markdown(f"""
-    <div style="{card_style}">
-        <div style="color:#9ca3af;font-size:14px;">
-            TREND
-        </div>
-
-        <div style="
-            color:#22c55e;
-            font-size:42px;
-            font-weight:bold;
-        ">
-            Bullish
-        </div>
+    st.markdown("""
+    <div class="metric-card">
+        <div class="metric-title">TREND</div>
+        <div class="metric-value">Bullish</div>
     </div>
     """, unsafe_allow_html=True)
 
