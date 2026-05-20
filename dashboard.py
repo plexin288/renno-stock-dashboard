@@ -19,6 +19,15 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+html, body, [class*="css"]  {
+    margin: 0;
+    padding: 0;
+}
+
+.stApp {
+    margin-top: -95px;
+}
+
 /* MAIN */
 .stApp {
     background-color: #020617;
