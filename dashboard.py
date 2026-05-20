@@ -1,32 +1,26 @@
+# =================================================
+# RENNO STOCK TERMINAL
+# =================================================
+
 import streamlit as st
 import pandas as pd
-from streamlit.components.v1 import html
 
-# =====================================================
+# =================================================
 # PAGE CONFIG
-# =====================================================
+# =================================================
 
 st.set_page_config(
     page_title="RENNO STOCK TERMINAL",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_icon="📈",
+    layout="wide"
 )
 
-# =====================================================
+# =================================================
 # CUSTOM CSS
-# =====================================================
+# =================================================
 
 st.markdown("""
 <style>
-
-html, body, [class*="css"]  {
-    margin: 0;
-    padding: 0;
-}
-
-.stApp {
-    margin-top: -95px;
-}
 
 /* MAIN */
 .stApp {
@@ -34,6 +28,7 @@ html, body, [class*="css"]  {
     color: white;
 }
 
+/* REMOVE STREAMLIT HEADER */
 header {
     visibility: hidden;
 }
@@ -49,93 +44,128 @@ header {
 
 /* SIDEBAR */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0f172a, #111827);
+    background: linear-gradient(180deg,#0f172a,#020617);
     border-right: 1px solid #1e293b;
 }
 
-/* SIDEBAR BUTTON */
-[data-testid="collapsedControl"] {
-    background-color: #1e293b !important;
-    border-radius: 12px !important;
-    padding: 8px !important;
-    transform: scale(1.4);
-}
-
-[data-testid="collapsedControl"] svg {
-    color: #60a5fa !important;
-}
-
 /* METRIC CARD */
-[data-testid="metric-container"] {
-    background: linear-gradient(145deg,#111827,#1e293b);
-    border: 1px solid #374151;
+.metric-card {
+    background: #111827;
+    border: 1px solid #22c55e;
+    padding: 20px;
     border-radius: 18px;
-    padding: 15px;
+    box-shadow: 0 0 20px rgba(34,197,94,0.25);
 }
 
-/* TABLE */
-[data-testid="stDataFrame"] {
-    border-radius: 16px;
-    overflow: hidden;
+/* METRIC TITLE */
+.metric-title {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* METRIC VALUE */
+.metric-value {
+    color: #22c55e;
+    font-size: 42px;
+    font-weight: bold;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =====================================================
+# =================================================
 # SIDEBAR
-# =====================================================
+# =================================================
 
-with st.sidebar:
+st.sidebar.image(
+    "https://cdn-icons-png.flaticon.com/512/2721/2721268.png",
+    width=120
+)
 
-    st.image(
-        "https://cdn-icons-png.flaticon.com/512/2103/2103633.png",
-        width=120
-    )
+st.sidebar.markdown("## 🚀 MENU")
 
-    st.markdown("## 🚀 MENU")
+selected = st.sidebar.radio(
+    "",
+    [
+        "Dashboard",
+        "Market Scanner",
+        "Watchlist",
+        "AI Signal",
+        "Portfolio",
+        "News",
+        "Settings"
+    ]
+)
 
-    selected = st.radio(
-        "",
-        [
-            "Dashboard",
-            "Market Scanner",
-            "Watchlist",
-            "AI Signal",
-            "Portfolio",
-            "News",
-            "Settings"
-        ]
-    )
-
-# =====================================================
-# DASHBOARD
-# =====================================================
+# =================================================
+# DASHBOARD PAGE
+# =================================================
 
 if selected == "Dashboard":
 
     st.title("RENNO STOCK TERMINAL")
+
     st.caption("Premium AI Powered IDX Dashboard")
 
     st.success("🟢 LIVE MARKET ACTIVE")
 
-# =================================================
-# METRIC
-# =================================================
+    # =================================================
+    # METRIC
+    # =================================================
 
-col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)
 
-with col1:
-    st.metric("STOCK", "BBCA")
+    with col1:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">
+                STOCK
+            </div>
 
-with col2:
-    st.metric("PRICE", "9,250")
+            <div class="metric-value">
+                BBCA
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-with col3:
-    st.metric("CHANGE", "+2.41%")
+    with col2:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">
+                PRICE
+            </div>
 
-with col4:
-    st.metric("TREND", "Bullish")
+            <div class="metric-value">
+                9,250
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">
+                CHANGE
+            </div>
+
+            <div class="metric-value">
+                +2.41%
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col4:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">
+                TREND
+            </div>
+
+            <div class="metric-value">
+                Bullish
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.write("")
 
@@ -154,38 +184,17 @@ with col4:
         st.subheader("📈 TradingView Chart")
 
         tradingview_widget = """
-        <div class="tradingview-widget-container">
-
-          <div id="tradingview_chart"></div>
-
-          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-
-          <script type="text/javascript">
-
-          new TradingView.widget(
-          {
-            "width": "100%",
-            "height": 620,
-            "symbol": "IDX:BBCA",
-            "interval": "D",
-            "timezone": "Asia/Jakarta",
-            "theme": "dark",
-            "style": "1",
-            "locale": "id",
-            "toolbar_bg": "#0f172a",
-            "enable_publishing": false,
-            "hide_top_toolbar": false,
-            "save_image": false,
-            "container_id": "tradingview_chart"
-          }
-          );
-
-          </script>
-
-        </div>
+        <iframe
+        src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=IDX:BBCA&interval=D&theme=dark&style=1&locale=en&toolbarbg=f1f3f6&hide_top_toolbar=false&saveimage=false"
+        width="100%"
+        height="500"
+        frameborder="0"
+        allowtransparency="true"
+        scrolling="no">
+        </iframe>
         """
 
-        html(tradingview_widget, height=650)
+        st.components.v1.html(tradingview_widget, height=500)
 
     # =================================================
     # WATCHLIST
@@ -195,28 +204,29 @@ with col4:
 
         st.subheader("🔥 WATCHLIST")
 
-        watchlist_df = pd.DataFrame({
-            "Stock": ["BBRI", "BMRI", "TLKM", "ANTM", "GOTO"],
-            "Change": ["+1.21%", "+3.11%", "-0.51%", "+5.22%", "+7.11%"]
-        })
+        watchlist = [
+            ("BBRI", "+2.4%"),
+            ("TLKM", "+1.1%"),
+            ("ASII", "+0.9%"),
+            ("BMRI", "+3.2%"),
+            ("GOTO", "-1.2%")
+        ]
 
-        for i, row in watchlist_df.iterrows():
+        for stock, change in watchlist:
 
-            stock = row["Stock"]
-            change = row["Change"]
+            color = "#22c55e"
 
-            color = "#22c55e" if "+" in change else "#ef4444"
+            if "-" in change:
+                color = "#ef4444"
 
-            card_html = f'''
+            st.markdown(f"""
             <div style="
-                background: linear-gradient(145deg,#111827,#1e293b);
-                padding:16px;
-                border-radius:16px;
-                border:1px solid #374151;
-                margin-bottom:12px;
-                box-shadow:0 0 15px rgba(0,0,0,0.25);
+                background:#111827;
+                border:1px solid #1e293b;
+                padding:15px;
+                border-radius:14px;
+                margin-bottom:10px;
             ">
-
                 <div style="
                     display:flex;
                     justify-content:space-between;
@@ -232,7 +242,7 @@ with col4:
                     </div>
 
                     <div style="
-                        font-size:15px;
+                        font-size:16px;
                         font-weight:bold;
                         color:{color};
                     ">
@@ -240,52 +250,12 @@ with col4:
                     </div>
 
                 </div>
-
             </div>
-            '''
+            """, unsafe_allow_html=True)
 
-            st.markdown(card_html, unsafe_allow_html=True)
-
-        st.write("")
-
-        # =============================================
-        # AI SIGNAL
-        # =============================================
-
-        st.subheader("🤖 AI SIGNAL")
-
-        st.metric(
-            "AI SCORE",
-            "8/10"
-        )
-
-        st.success("🚀 STRONG BUY")
-
-        st.write("✅ MACD Bullish")
-        st.write("✅ RSI Healthy")
-        st.write("✅ Volume Surge")
-        st.write("✅ Price Above MA20")
-
-    st.write("")
-
-    # =================================================
-    # MARKET SCANNER TABLE
-    # =================================================
-
-    st.subheader("📋 MARKET SCANNER")
-
-    scanner_df = pd.DataFrame({
-        "Stock": ["BBCA", "BBRI", "BMRI", "TLKM", "ASII"],
-        "Price": [9250, 5100, 6450, 3820, 4900],
-        "Change": ["+2.41%", "+1.11%", "+0.91%", "-0.31%", "+1.44%"],
-        "Trend": ["Bullish", "Bullish", "Bullish", "Neutral", "Bullish"]
-    })
-
-    st.dataframe(scanner_df, use_container_width=True)
-
-# =====================================================
+# =================================================
 # MARKET SCANNER PAGE
-# =====================================================
+# =================================================
 
 elif selected == "Market Scanner":
 
@@ -300,9 +270,9 @@ elif selected == "Market Scanner":
 
     st.dataframe(scanner_df, use_container_width=True)
 
-# =====================================================
+# =================================================
 # WATCHLIST PAGE
-# =====================================================
+# =================================================
 
 elif selected == "Watchlist":
 
@@ -310,9 +280,9 @@ elif selected == "Watchlist":
 
     st.info("Custom Watchlist Coming Soon")
 
-# =====================================================
+# =================================================
 # AI SIGNAL PAGE
-# =====================================================
+# =================================================
 
 elif selected == "AI Signal":
 
@@ -322,9 +292,9 @@ elif selected == "AI Signal":
 
     st.success("Top Signal Today: BBRI")
 
-# =====================================================
+# =================================================
 # PORTFOLIO PAGE
-# =====================================================
+# =================================================
 
 elif selected == "Portfolio":
 
@@ -332,26 +302,22 @@ elif selected == "Portfolio":
 
     st.info("Portfolio Tracker Coming Soon")
 
-# =====================================================
+# =================================================
 # NEWS PAGE
-# =====================================================
+# =================================================
 
 elif selected == "News":
 
-    st.title("📰 Market News")
+    st.title("📰 News")
 
-    st.info("BBCA reports strong quarterly earnings")
-    st.info("Foreign flow returns to IDX banking sector")
-    st.info("Coal sector gains momentum this week")
+    st.info("Realtime Market News Coming Soon")
 
-# =====================================================
+# =================================================
 # SETTINGS PAGE
-# =====================================================
+# =================================================
 
 elif selected == "Settings":
 
     st.title("⚙️ Settings")
 
-    st.toggle("Dark Mode", value=True)
-    st.toggle("Telegram Alert", value=True)
-    st.toggle("Realtime Scanner", value=True)
+    st.info("Settings Panel Coming Soon")
