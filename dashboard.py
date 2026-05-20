@@ -33,8 +33,9 @@ HEADER
 ========================================================= */
 
 header {
-    visibility: visible;
-    background: transparent;
+    visibility: visible !important;
+    background: rgba(2,6,23,0.95) !important;
+    height: 60px !important;
 }
 
 /* =========================================================
@@ -42,7 +43,7 @@ TOP SPACE
 ========================================================= */
 
 .block-container {
-    padding-top: 1rem;
+    padding-top: 5rem !important;   
 }
 
 /* =========================================================
@@ -67,8 +68,28 @@ HAMBURGER MENU
 ========================================================= */
 
 [data-testid="collapsedControl"] {
-    display: block;
-    color: white;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    position: fixed !important;
+    top: 12px !important;
+    left: 12px !important;
+
+    z-index: 999999 !important;
+
+    background: #111827 !important;
+    border: 1px solid #22c55e !important;
+    border-radius: 12px !important;
+
+    padding: 8px !important;
+}
+
+/* ICON */
+[data-testid="collapsedControl"] svg {
+    width: 26px !important;
+    height: 26px !important;
+    fill: white !important;
 }
 
 /* =========================================================
