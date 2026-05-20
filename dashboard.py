@@ -24,9 +24,15 @@ st.markdown("""
     color: white;
 }
 
+/* HAMBURGER MENU */
+[data-testid="collapsedControl"] {
+    display: block;
+    color: white;
+}
+
 /* HIDE STREAMLIT */
 header {
-    visibility: hidden;
+    background: transparent;
 }
 
 [data-testid="stToolbar"] {
