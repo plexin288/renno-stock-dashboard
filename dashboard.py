@@ -119,65 +119,85 @@ if selected == "Dashboard":
 
     st.success("🟢 LIVE MARKET ACTIVE")
 
-    # =================================================
-    # METRIC
-    # =================================================
+    # ============================================
+# METRIC
+# ============================================
 
 col1, col2, col3, col4 = st.columns(4)
 
+card_style = """
+background:#111827;
+border:1px solid #22c55e;
+padding:25px;
+border-radius:18px;
+box-shadow:0 0 20px rgba(34,197,94,0.25);
+"""
+
 with col1:
-    st.markdown("""
-    <div style="
-        background:#111827;
-        border:1px solid #22c55e;
-        padding:20px;
-        border-radius:18px;
-        box-shadow:0 0 20px rgba(34,197,94,0.25);
-    ">
-        <p style="color:#9ca3af;">STOCK</p>
-        <h1 style="color:#22c55e; font-size:48px;">
+    st.markdown(f"""
+    <div style="{card_style}">
+        <div style="color:#9ca3af;font-size:14px;">
+            STOCK
+        </div>
+
+        <div style="
+            color:#22c55e;
+            font-size:42px;
+            font-weight:bold;
+        ">
+            BBCA
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
-    st.markdown("""
-    <div style="
-        background:#111827;
-        border:1px solid #22c55e;
-        padding:20px;
-        border-radius:18px;
-        box-shadow:0 0 20px rgba(34,197,94,0.25);
-    ">
-        <p style="color:#9ca3af;">PRICE</p>
-        <h1 style="color:#22c55e; font-size:48px;">
+    st.markdown(f"""
+    <div style="{card_style}">
+        <div style="color:#9ca3af;font-size:14px;">
+            PRICE
+        </div>
+
+        <div style="
+            color:#22c55e;
+            font-size:42px;
+            font-weight:bold;
+        ">
+            9,250
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col3:
-    st.markdown("""
-    <div style="
-        background:#111827;
-        border:1px solid #22c55e;
-        padding:20px;
-        border-radius:18px;
-        box-shadow:0 0 20px rgba(34,197,94,0.25);
-    ">
-        <p style="color:#9ca3af;">CHANGE</p>
-        <h1 style="color:#22c55e; font-size:48px;">
+    st.markdown(f"""
+    <div style="{card_style}">
+        <div style="color:#9ca3af;font-size:14px;">
+            CHANGE
+        </div>
+
+        <div style="
+            color:#22c55e;
+            font-size:42px;
+            font-weight:bold;
+        ">
+            +2.41%
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col4:
-    st.markdown("""
-    <div style="
-        background:#111827;
-        border:1px solid #22c55e;
-        padding:20px;
-        border-radius:18px;
-        box-shadow:0 0 20px rgba(34,197,94,0.25);
-    ">
-        <p style="color:#9ca3af;">TREND</p>
-        <h1 style="color:#22c55e; font-size:48px;">
+    st.markdown(f"""
+    <div style="{card_style}">
+        <div style="color:#9ca3af;font-size:14px;">
+            TREND
+        </div>
+
+        <div style="
+            color:#22c55e;
+            font-size:42px;
+            font-weight:bold;
+        ">
+            Bullish
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
