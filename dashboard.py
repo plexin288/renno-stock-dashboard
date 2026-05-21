@@ -1,13 +1,10 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from streamlit_option_menu import option_menu
+import plotly.graph_objects as go
+import plotly.express as px
 import pandas as pd
 import numpy as np
-import plotly.express as px
-
-# =========================
-# PAGE CONFIG
-# =========================
+import yfinance as yf
 
 st.set_page_config(
     page_title="StockAI Dashboard",
@@ -41,23 +38,14 @@ header {
     display: none;
 }
 
-section[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.98) !important;
-    border-right: 1px solid #E5E7EB !important;
-
-    min-width: 280px !important;
-    max-width: 280px !important;
-    width: 280px !important;
-
-    display: block !important;
-    visibility: visible !important;
-    overflow: visible !important;
-
-    z-index: 999999 !important;
+[data-testid="collapsedControl"] {
+    display: block;
+    color: #8B5CF6;
 }
 
-section[data-testid="stSidebar"] > div {
-    width: 280px !important;
+section[data-testid="stSidebar"] {
+    background: rgba(255,255,255,0.9);
+    border-right: 1px solid #E5E7EB;
 }
 
 .card {
@@ -94,6 +82,13 @@ section[data-testid="stSidebar"] > div {
 .red {
     color: #EF4444;
     font-weight: 600;
+}
+
+.watchlist-row {
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid #F3F4F6;
 }
 
 .small-title {
@@ -251,43 +246,32 @@ with left:
     </div>
     """, unsafe_allow_html=True)
 
-    # =========================
-    # TRADINGVIEW CHART
-    # =========================
+    # DUMMY CHART
+    np.random.seed(1)
+    dates = pd.date_range(start="2025-01-01", periods=80)
+    prices = np.cumsum(np.random.randn(80)) + 100
 
-    tradingview_widget = """
-    <div class="tradingview-widget-container">
-      <div id="tradingview_chart"></div>
+    fig = go.Figure()
 
-      <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    fig.add_trace(go.Scatter(
+        x=dates,
+        y=prices,
+        mode='lines',
+        line=dict(color='#8B5CF6', width=3),
+        fill='tozeroy'
+    ))
 
-      <script type="text/javascript">
-      new TradingView.widget({
-        "width": "100%",
-        "height": 600,
-        "symbol": "IDX:BBCA",
-        "interval": "D",
-        "timezone": "Asia/Jakarta",
-        "theme": "light",
-        "style": "1",
-        "locale": "id",
-        "toolbar_bg": "#F8F7FF",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "hide_top_toolbar": false,
-        "hide_legend": false,
-        "save_image": false,
-        "container_id": "tradingview_chart",
-        "studies": [
-          "MASimple@tv-basicstudies",
-          "Volume@tv-basicstudies"
-        ]
-      });
-      </script>
-    </div>
-    """
+    fig.update_layout(
+        height=500,
+        paper_bgcolor='white',
+        plot_bgcolor='white',
+        margin=dict(l=10,r=10,t=10,b=10),
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=True, gridcolor='#F3F4F6'),
+        font=dict(color='#111827')
+    )
 
-    components.html(tradingview_widget, height=560)
+    st.plotly_chart(fig, use_container_width=True)
 
     c1,c2,c3 = st.columns(3)
 
@@ -314,6 +298,35 @@ with left:
         <h2>1.45M</h2>
         </div>
         """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    bottom1,bottom2 = st.columns(2)
+
+    with bottom1:
+
+        st.markdown("""
+        <div class='card'>
+        <div class='small-title'>AI Signal</div>
+        <br>
+        <h2>BBCA</h2>
+        <p class='green'>STRONG BUY</p>
+        <p>Entry : 9780 - 9850</p>
+        <p>TP : 10200</p>
+        <p>SL : 9400</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with bottom2:
+
+        scanner = pd.DataFrame({
+            'Stock':['ADRO','PTBA','SMGR','UNTR'],
+            'Signal':['Breakout','Volume Surge','Bullish','Trend Bullish'],
+            'Score':[88,85,82,80]
+        })
+
+        st.markdown("<div class='small-title'>Stock Scanner</div>", unsafe_allow_html=True)
+        st.dataframe(scanner, use_container_width=True)
 
 # =========================
 # RIGHT SIDE
@@ -374,3 +387,21 @@ with right:
     )
 
     st.plotly_chart(fig2, use_container_width=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown("<div class='small-title'>Alerts</div>", unsafe_allow_html=True)
+
+    alerts = [
+        'BBCA breakout resistance 9800',
+        'BMRI volume surge detected',
+        'TLKM RSI oversold',
+        'ASII bullish crossover MA20 & MA50'
+    ]
+
+    for a in alerts:
+        st.markdown(f"""
+        <div class='card' style='margin-bottom:10px;'>
+        🔔 {a}
+        </div>
+        """, unsafe_allow_html=True)
