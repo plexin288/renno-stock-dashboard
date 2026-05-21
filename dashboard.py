@@ -85,7 +85,7 @@ if selected == "Dashboard":
     with left_col:
         df = load_stock(ticker_input)
         if not df.empty:
-            last_price = df['Close'].iloc[-1]
+            last_price = df['Close'].iloc[-1].item()
             # Card Chart Utama (Candlestick biar persis desain)
             st.markdown(f"""<div class='card'><p style='margin:0; font-weight:600;'>{ticker_input} · Data</p><h1 style='margin:0;'>{last_price:,.0f} <span style='font-size:16px;' class='green'>+1.29%</span></h1></div>""", unsafe_allow_html=True)
             
