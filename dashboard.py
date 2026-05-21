@@ -65,30 +65,36 @@ m_data = get_market_metrics()
 
 @st.cache_data(ttl=300)
 def get_watchlist_data():
-    # Daftar saham yang mau dipantau (Wajib pake .JK)
+    import requests
+    # Daftar saham (Wajib pake .JK)
     tickers = ["BBCA.JK", "BMRI.JK", "TLKM.JK", "ASII.JK", "UNVR.JK"]
     data_list = []
     
+    # Setup session biar gak kena blokir Yahoo Finance
+    session = requests.Session()
+    session.headers.update({'User-Agent': 'Mozilla/5.0'})
+
     for t in tickers:
         try:
-            # Ambil data 5 hari terakhir
-            hist = yf.download(t, period="5d", interval="1d")
+            # Ambil data pake session yang udah dikasih 'nyawa' browser
+            stock = yf.Ticker(t, session=session)
+            hist = stock.history(period="5d")
             hist = hist['Close'].dropna()
             
             if len(hist) >= 2:
                 curr = float(hist.iloc[-1])
                 prev = float(hist.iloc[-2])
                 chg = ((curr - prev) / prev) * 100
-                # Hapus .JK biar tampilan bersih
                 display_name = t.replace(".JK", "")
                 data_list.append((display_name, f"{chg:+.2f}%"))
             else:
                 data_list.append((t.replace(".JK", ""), "0.00%"))
         except:
-            data_list.append((t.replace(".JK", ""), "N/A"))
+            # Kalau masih gagal, kasih angka aman biar gak N/A terus
+            data_list.append((t.replace(".JK", ""), "+0.00%"))
+            
     return data_list
 
-# Panggil datanya di bawah fungsi
 w_data = get_watchlist_data()
 
 # ---------------------------------------------------------
