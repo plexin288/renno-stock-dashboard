@@ -73,45 +73,29 @@ with col_h2:
 
 if selected == "Dashboard":
   # 1. METRICS ROW (Auto-Update Data)
-    @st.cache_data(ttl=600)  # Data refresh otomatis tiap 10 menit
+    @st.cache_data(ttl=600)
     def get_market_metrics():
         try:
-            # Tarik data IHSG (^JKSE)
             ihsg_data = yf.download("^JKSE", period="2d")
             curr_ihsg = ihsg_data['Close'].iloc[-1]
             prev_ihsg = ihsg_data['Close'].iloc[-2]
             ihsg_chg = ((curr_ihsg - prev_ihsg) / prev_ihsg) * 100
             
-            # Simulasi data volume/value/cap (bisa lu kembangin pake API berbayar kedepannya)
-            # Untuk sekarang kita pake data rata-rata market yang dinamis
-            metrics = {
+            return {
                 "ihsg": {"val": f"{curr_ihsg:,.2f}", "chg": f"{ihsg_chg:+.2f}%"},
                 "vol": {"val": "20.45 B", "chg": "+12.3%"},
-                "val": "12.35 T", "chg": "+8.2%"},
+                "val": {"val": "12.35 T", "chg": "+8.2%"},
                 "cap": {"val": "11,234 T", "chg": "+0.7%"}
             }
-            
-            return metrics
         except:
-            # Fallback jika koneksi gagal
             return {
                 "ihsg": {"val": "7,145.23", "chg": "+0.64%"},
                 "vol": {"val": "20.45 B", "chg": "+12.3%"},
-                "val": "12.35 T", "chg": "+8.2%"},
+                "val": {"val": "12.35 T", "chg": "+8.2%"},
                 "cap": {"val": "11,234 T", "chg": "+0.7%"}
             }
 
     m_data = get_market_metrics()
-    m1, m2, m3, m4 = st.columns(4)
-
-    with m1: 
-        st.markdown(f"<div class='metric-card'><p style='color:#6B7280; font-size:12px; margin:0;'>IHSG</p><h3 style='margin:0;'>{m_data['ihsg']['val']}</h3><p class='green' style='font-size:12px; margin:0;'>{m_data['ihsg']['chg']}</p></div>", unsafe_allow_html=True)
-    with m2: 
-        st.markdown(f"<div class='metric-card'><p style='color:#6B7280; font-size:12px; margin:0;'>Volume</p><h3 style='margin:0;'>{m_data['vol']['val']}</h3><p class='green' style='font-size:12px; margin:0;'>{m_data['vol']['chg']}</p></div>", unsafe_allow_html=True)
-    with m3: 
-        st.markdown(f"<div class='metric-card'><p style='color:#6B7280; font-size:12px; margin:0;'>Value</p><h3 style='margin:0;'>{m_data['val']['val']}</h3><p class='green' style='font-size:12px; margin:0;'>{m_data['val']['chg']}</p></div>", unsafe_allow_html=True)
-    with m4: 
-        st.markdown(f"<div class='metric-card'><p style='color:#6B7280; font-size:12px; margin:0;'>Market Cap</p><h3 style='margin:0;'>{m_data['cap']['val']}</h3><p class='green' style='font-size:12px; margin:0;'>{m_data['cap']['chg']}</p></div>", unsafe_allow_html=True)
 
    # 2. MAIN CONTENT (Refined Layout)
     # Kita rapetin gap antar kolom
