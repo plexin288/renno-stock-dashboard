@@ -63,6 +63,34 @@ def get_market_metrics():
 
 m_data = get_market_metrics()
 
+@st.cache_data(ttl=300)
+def get_watchlist_data():
+    # Daftar saham yang mau dipantau (Wajib pake .JK)
+    tickers = ["BBCA.JK", "BMRI.JK", "TLKM.JK", "ASII.JK", "UNVR.JK"]
+    data_list = []
+    
+    for t in tickers:
+        try:
+            # Ambil data 5 hari terakhir
+            hist = yf.download(t, period="5d", interval="1d")
+            hist = hist['Close'].dropna()
+            
+            if len(hist) >= 2:
+                curr = float(hist.iloc[-1])
+                prev = float(hist.iloc[-2])
+                chg = ((curr - prev) / prev) * 100
+                # Hapus .JK biar tampilan bersih
+                display_name = t.replace(".JK", "")
+                data_list.append((display_name, f"{chg:+.2f}%"))
+            else:
+                data_list.append((t.replace(".JK", ""), "0.00%"))
+        except:
+            data_list.append((t.replace(".JK", ""), "N/A"))
+    return data_list
+
+# Panggil datanya di bawah fungsi
+w_data = get_watchlist_data()
+
 # ---------------------------------------------------------
 # SIDEBAR (Normal Mode)
 # ---------------------------------------------------------
