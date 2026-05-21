@@ -1,22 +1,21 @@
 import streamlit as st
+import pandas as pd
 
-def render_card(ticker, data):
-    if data['error']:
-        st.error(f"Gagal memuat {ticker}")
-        return
-
-    # Warna tergantung kondisi naik atau turun
+def render_pro_card(ticker, data):
     color = "green" if data['pct'] >= 0 else "red"
     
     st.markdown(f"""
     <div class="card-premium">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="ticker-name">{ticker}</div>
-            <div style="font-size:12px; color:gray;">{data['pct']:.2f}%</div>
-        </div>
-        <div style="font-size:24px; font-weight:800; margin:10px 0;">Rp {data['price']:,.0f}</div>
-        <div style="background:{color}15; color:{color}; padding:5px; border-radius:8px; text-align:center; font-weight:bold;">
-            {data['pct']:.2f}%
+        <div style="font-size:18px; font-weight:700;">{ticker}</div>
+        <div style="font-size:22px; font-weight:800;">Rp {data['price']:,.0f}</div>
+        <div style="color:{color}; font-weight:600;">{data['pct']:+.2f}%</div>
+        <div style="font-size:12px; margin-top:10px;">
+            RSI: {data['rsi']}<br>
+            MACD: {data['macd']}
         </div>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Grafik kecil (Sparkline)
+    chart_data = pd.DataFrame(data['history'], columns=['price'])
+    st.line_chart(chart_data, use_container_width=True, height=100)
