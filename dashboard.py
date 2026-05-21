@@ -108,6 +108,19 @@ section[data-testid="stSidebar"] {
     font-weight:600;
 }
 
+button[kind="header"] {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 999999 !important;
+}
+
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
