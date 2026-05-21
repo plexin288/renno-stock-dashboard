@@ -1,6 +1,6 @@
 streamlit
 streamlit-option-menu
+yfinance
 plotly
 pandas
 numpy
-yfinance
