@@ -30,10 +30,6 @@ html, body, [class*="css"] {
     background-color: #F8F7FF;
 }
 
-header {
-    visibility: hidden;
-}
-
 [data-testid="stToolbar"] {
     display: none;
 }
