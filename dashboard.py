@@ -86,26 +86,34 @@ if selected == "Dashboard":
         # Header Chart
         st.markdown(f"<div class='card'><p style='margin:0; font-weight:600;'>{ticker_input} · Live Chart</p></div>", unsafe_allow_html=True)
         
-        # Widget TradingView
+       # Widget TradingView (Ukuran Gede)
         import streamlit.components.v1 as components
         tv_symbol = f"IDX:{ticker_input}"
         
         tradingview_html = f"""
-            <div class="tradingview-widget-container" style="height: 500px;">
-                <div id="tradingview_88"></div>
+            <div class="tradingview-widget-container" style="height: 650px;">
+                <div id="tradingview_88" style="height: 100%;"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
                 <script type="text/javascript">
                 new TradingView.widget({{
-                  "autosize": true, "symbol": "{tv_symbol}", "interval": "D",
-                  "timezone": "Asia/Jakarta", "theme": "light", "style": "1",
-                  "locale": "en", "toolbar_bg": "#f1f3f6", "enable_publishing": false,
-                  "hide_side_toolbar": false, "allow_symbol_change": true,
+                  "autosize": true, 
+                  "symbol": "{tv_symbol}", 
+                  "interval": "D",
+                  "timezone": "Asia/Jakarta", 
+                  "theme": "light", 
+                  "style": "1",
+                  "locale": "en", 
+                  "toolbar_bg": "#f1f3f6", 
+                  "enable_publishing": false,
+                  "hide_side_toolbar": false, 
+                  "allow_symbol_change": true,
                   "container_id": "tradingview_88"
                 }});
                 </script>
             </div>
         """
-        components.html(tradingview_html, height=520)
+        # "height" di bawah ini diset 680 biar pas sama container 650px tadi
+        components.html(tradingview_html, height=680)
 
     with right_col:
         # Watchlist lu tetep ditaruh di sini biar muncul di kanan
