@@ -72,28 +72,33 @@ with col_h2:
     ticker_input = st.text_input("", value="BBCA", placeholder="Search stock (e.g BBCA)").upper()
 
 if selected == "Dashboard":
-  # 1. METRICS ROW (Auto-Update Data)
+ # 1. METRICS ROW (Versi Anti-Ngilang)
     @st.cache_data(ttl=600)
     def get_market_metrics():
         try:
-            ihsg_data = yf.download("^JKSE", period="2d")
-            curr_ihsg = ihsg_data['Close'].iloc[-1]
-            prev_ihsg = ihsg_data['Close'].iloc[-2]
-            ihsg_chg = ((curr_ihsg - prev_ihsg) / prev_ihsg) * 100
+            # Tarik data lebih panjang (5 hari) biar pasti dapet angka
+            ihsg_data = yf.download("^JKSE", period="5d")
             
-            return {
-                "ihsg": {"val": f"{curr_ihsg:,.2f}", "chg": f"{ihsg_chg:+.2f}%"},
-                "vol": {"val": "20.45 B", "chg": "+12.3%"},
-                "val": {"val": "12.35 T", "chg": "+8.2%"},
-                "cap": {"val": "11,234 T", "chg": "+0.7%"}
-            }
-        except:
-            return {
-                "ihsg": {"val": "7,145.23", "chg": "+0.64%"},
-                "vol": {"val": "20.45 B", "chg": "+12.3%"},
-                "val": {"val": "12.35 T", "chg": "+8.2%"},
-                "cap": {"val": "11,234 T", "chg": "+0.7%"}
-            }
+            # Buang baris yang isinya kosong/NaN
+            ihsg_clean = ihsg_data['Close'].dropna()
+            
+            if len(ihsg_clean) >= 2:
+                curr_ihsg = ihsg_clean.iloc[-1]
+                prev_ihsg = ihsg_clean.iloc[-2]
+                ihsg_chg = ((curr_ihsg - prev_ihsg) / prev_ihsg) * 100
+                ihsg_val = f"{float(curr_ihsg):,.2f}"
+                ihsg_pct = f"{float(ihsg_chg):+.2f}%"
+            else:
+                ihsg_val, ihsg_pct = "7,145.23", "+0.64%"
+        except Exception as e:
+            ihsg_val, ihsg_pct = "7,145.23", "+0.64%"
+            
+        return {
+            "ihsg": {"val": ihsg_val, "chg": ihsg_pct},
+            "vol": {"val": "20.45 B", "chg": "+12.3%"},
+            "val": {"val": "12.35 T", "chg": "+8.2%"},
+            "cap": {"val": "11,234 T", "chg": "+0.7%"}
+        }
 
     m_data = get_market_metrics()
 
