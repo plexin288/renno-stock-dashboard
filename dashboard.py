@@ -63,42 +63,38 @@ def get_market_metrics():
 
 m_data = get_market_metrics()
 
+# --- BAGIAN WATCHLIST LIVE (Taruh di bawah m_data) ---
 @st.cache_data(ttl=300)
 def get_watchlist_data():
     import requests
-    # List saham sesuai yang ada di watchlist lu
     tickers = ["BBCA.JK", "BMRI.JK", "TLKM.JK", "ASII.JK", "UNVR.JK"]
     data_list = []
-    
-    # Session biar gak dianggap robot
     session = requests.Session()
     session.headers.update({'User-Agent': 'Mozilla/5.0'})
-
     for t in tickers:
         try:
             stock = yf.Ticker(t, session=session)
-            # Ambil 7 hari biar kalo hari libur/tutup tetep dapet data terakhir
             hist = stock.history(period="7d")
-            
-            # Filter baris yang ada isinya (Close > 0)
             hist = hist[hist['Close'] > 0].dropna()
-            
             if len(hist) >= 2:
-                # Harga hari ini (atau penutupan terakhir)
                 curr = float(hist['Close'].iloc[-1])
-                # Harga hari sebelumnya
                 prev = float(hist['Close'].iloc[-2])
-                
-                # Hitung persentase persis kayak di Yahoo Finance
                 chg = ((curr - prev) / prev) * 100
                 display_name = t.replace(".JK", "")
                 data_list.append((display_name, f"{chg:+.2f}%"))
             else:
                 data_list.append((t.replace(".JK", ""), "Closed"))
-        except Exception as e:
+        except:
             data_list.append((t.replace(".JK", ""), "N/A"))
-            
     return data_list
+
+# INI KUNCINYA: Panggil variabelnya di luar fungsi
+w_data = get_watchlist_data()
+
+# --- LANJUT KE SIDEBAR (Baris 105-an) ---
+with st.sidebar:
+    st.title("🚀 StockAI")
+    # ... dst
 
 # ---------------------------------------------------------
 # SIDEBAR (Normal Mode)
