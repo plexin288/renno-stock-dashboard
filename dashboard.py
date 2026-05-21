@@ -155,11 +155,17 @@ if selected == "Dashboard":
 
     with right_col:
         st.markdown("<p style='font-weight:700; margin-bottom:15px; color:#111827;'>Watchlist</p>", unsafe_allow_html=True)
-        watchlist = [("BBCA", "+1.29%"), ("BMRI", "+1.12%"), ("TLKM", "-0.34%"), ("ASII", "+0.84%"), ("UNVR", "-0.61%")]
         
-        for s, c in watchlist:
-            color = "#10B981" if "+" in c else "#EF4444"
-            bg_color = "#DCFCE7" if "+" in c else "#FEE2E2"
+        # Iterasi dari data w_data yang ditarik secara live tadi
+        for s, c in w_data:
+            # Warna otomatis: Hijau jika naik (+), Merah jika turun (-)
+            is_positive = "+" in c
+            color = "#10B981" if is_positive else "#EF4444"
+            bg_color = "#DCFCE7" if is_positive else "#FEE2E2"
+            
+            if "N/A" in c: # Jika data gagal ditarik
+                color, bg_color = "#6B7280", "#F3F4F6"
+
             st.markdown(f"""
                 <div style='background: white; padding: 15px; border-radius: 15px; border: 1px solid #F1F1F1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;'>
                     <b style='color:#111827;'>{s}</b>
