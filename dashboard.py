@@ -79,19 +79,41 @@ if selected == "Dashboard":
     with m3: st.markdown("<div class='metric-card'><p style='color:#6B7280; font-size:12px; margin:0;'>Value</p><h3 style='margin:0;'>12.35 T</h3><p class='green' style='font-size:12px; margin:0;'>+8.2%</p></div>", unsafe_allow_html=True)
     with m4: st.markdown("<div class='metric-card'><p style='color:#6B7280; font-size:12px; margin:0;'>Market Cap</p><h3 style='margin:0;'>11,234 T</h3><p class='green' style='font-size:12px; margin:0;'>+0.7%</p></div>", unsafe_allow_html=True)
 
-    # 2. MAIN CONTENT
+   # 2. MAIN CONTENT (TradingView Version)
     left_col, right_col = st.columns([3, 1.2])
 
     with left_col:
-        df = load_stock(ticker_input)
-        if not df.empty:
-            last_price = df['Close'].iloc[-1].item()
-            # Card Chart Utama (Candlestick biar persis desain)
-            st.markdown(f"""<div class='card'><p style='margin:0; font-weight:600;'>{ticker_input} · Data</p><h1 style='margin:0;'>{last_price:,.0f} <span style='font-size:16px;' class='green'>+1.29%</span></h1></div>""", unsafe_allow_html=True)
-            
-            fig = go.Figure(data=[go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'])])
-            fig.update_layout(height=400, margin=dict(l=0,r=0,t=0,b=0), template="plotly_white", xaxis_rangeslider_visible=False)
-            st.plotly_chart(fig, use_container_width=True)
+        # Header Chart
+        st.markdown(f"<div class='card'><p style='margin:0; font-weight:600;'>{ticker_input} · Live Chart</p></div>", unsafe_allow_html=True)
+        
+        # Widget TradingView
+        import streamlit.components.v1 as components
+        tv_symbol = f"IDX:{ticker_input}"
+        
+        tradingview_html = f"""
+            <div class="tradingview-widget-container" style="height: 500px;">
+                <div id="tradingview_88"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
+                new TradingView.widget({{
+                  "autosize": true, "symbol": "{tv_symbol}", "interval": "D",
+                  "timezone": "Asia/Jakarta", "theme": "light", "style": "1",
+                  "locale": "en", "toolbar_bg": "#f1f3f6", "enable_publishing": false,
+                  "hide_side_toolbar": false, "allow_symbol_change": true,
+                  "container_id": "tradingview_88"
+                }});
+                </script>
+            </div>
+        """
+        components.html(tradingview_html, height=520)
+
+    with right_col:
+        # Watchlist lu tetep ditaruh di sini biar muncul di kanan
+        st.markdown("<p style='font-weight:700; margin-bottom:10px;'>Watchlist</p>", unsafe_allow_html=True)
+        watchlist = [("BBCA", "+1.29%"), ("BMRI", "+1.12%"), ("TLKM", "-0.34%"), ("ASII", "+0.84%")]
+        for s, c in watchlist:
+            color = "green" if "+" in c else "red"
+            st.markdown(f"<div class='card' style='padding:12px; margin-bottom:8px;'><div style='display:flex; justify-content:space-between;'><b>{s}</b><span class='{color}'>{c}</span></div></div>", unsafe_allow_html=True)
 
     with right_col:
         st.markdown("<p style='font-weight:700; margin-bottom:10px;'>Watchlist</p>", unsafe_allow_html=True)
