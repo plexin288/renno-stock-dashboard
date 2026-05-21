@@ -1,6 +1,6 @@
 import streamlit as st
 from styles import inject_custom_css
-from engine_data import get_stock_data
+from engine_data import get_stock_metrics
 from components import render_stock_card
 
 # 1. Setup
