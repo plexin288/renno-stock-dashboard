@@ -42,8 +42,20 @@ header {
 }
 
 [data-testid="collapsedControl"] {
-    display: block;
-    color: #8B5CF6;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 999999 !important;
+
+    position: fixed !important;
+    top: 20px !important;
+    left: 20px !important;
+
+    background: white !important;
+    border-radius: 12px !important;
+    padding: 8px !important;
+
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 section[data-testid="stSidebar"] {
