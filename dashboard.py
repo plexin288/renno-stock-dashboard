@@ -90,6 +90,7 @@ if selected == "Dashboard":
                 "val": "12.35 T", "chg": "+8.2%"},
                 "cap": {"val": "11,234 T", "chg": "+0.7%"}
             }
+            
             return metrics
         except:
             # Fallback jika koneksi gagal
