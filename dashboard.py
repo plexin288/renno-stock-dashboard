@@ -49,6 +49,7 @@ header {
 section[data-testid="stSidebar"] {
     background: rgba(255,255,255,0.95);
     border-right: 1px solid #E5E7EB;
+    z-index: 999999 !important;
 }
 
 .card {
@@ -278,7 +279,7 @@ with left:
     </div>
     """
 
-    components.html(tradingview_widget, height=620)
+    components.html(tradingview_widget, height=560)
 
     c1,c2,c3 = st.columns(3)
 
