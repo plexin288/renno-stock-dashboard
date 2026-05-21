@@ -75,11 +75,12 @@ if selected == "Dashboard":
 # 1. METRICS ROW (Versi Stabil & Terupdate)
     @st.cache_data(ttl=300) # Update otomatis setiap 5 menit
     def get_market_metrics():
+        import yfinance as yf
         try:
-            # Kita ambil data 7 hari biar aman dari hari libur/sabtu-minggu
+            # Mengambil data 7 hari agar aman dari hari libur
             df_ihsg = yf.download("^JKSE", period="7d", interval="1d")
             
-            # Buang data kosong dan ambil 2 baris terakhir untuk hitung perubahan
+            # Buang data kosong (NaN)
             df_ihsg = df_ihsg['Close'].dropna()
             
             if len(df_ihsg) >= 2:
@@ -90,9 +91,10 @@ if selected == "Dashboard":
                 ihsg_txt = f"{current_val:,.2f}"
                 ihsg_chg = f"{change_pct:+.2f}%"
             else:
-                # Fallback kalau data Yahoo Finance lagi error
+                # Fallback data statis jika API kosong
                 ihsg_txt, ihsg_chg = "7,215.40", "+0.45%"
         except:
+            # Fallback jika koneksi gagal
             ihsg_txt, ihsg_chg = "7,215.40", "+0.45%"
             
         return {
@@ -103,6 +105,9 @@ if selected == "Dashboard":
         }
 
     m_data = get_market_metrics()
+
+    with m1: 
+        st.markdown(f"<div class='metric-card'><p style='color:#6B7280; font-size:12px; margin:0;'>IHSG</p><h3 style='margin:0;'>{m_data['ihsg']['val']}</h3><p style='color:#10B981; font-size:12px; margin:0;'>{m_data['ihsg']['chg']}</p></div>", unsafe_allow_html=True)
 
    # 2. MAIN CONTENT (Refined Layout)
     # Kita rapetin gap antar kolom
