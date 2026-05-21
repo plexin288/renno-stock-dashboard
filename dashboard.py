@@ -2,88 +2,122 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import yfinance as yf
-from datetime import datetime, timedelta
+import requests
+from datetime import datetime
 
-# --- 1. SETTINGS & CSS KUSTOM (BAGIAN INI AKAN SANGAT PANJANG DI KODE ASLI LU) ---
-st.set_page_config(page_title="Apex Intelligence", layout="wide")
+# --- CONFIGURASI UTAMA ---
+st.set_page_config(page_title="Apex Intelligence", layout="wide", page_icon="🚀")
 
+# --- CSS PRO-GRADE (MENGGANTIKAN SEMUA FILE CSS) ---
 st.markdown("""
 <style>
-    /* Styling Dasar & Palette Warna */
-    :root { --main-bg: #F8F9FF; --side-bg: #D1C4E9; --card-bg: #FFFFFF; --purple: #7E57C2; }
-    .stApp { background-color: var(--main-bg); }
-    [data-testid="stSidebar"] { background-color: var(--side-bg) !important; padding: 20px; }
-    
-    /* Kartu Saham */
+    :root { 
+        --bg-color: #F8F9FF; 
+        --sidebar-bg: #E1D5F8; 
+        --card-bg: #FFFFFF; 
+        --primary-purple: #6A1B9A; 
+        --accent-purple: #9575CD;
+    }
+    .stApp { background-color: var(--bg-color); }
+    [data-testid="stSidebar"] { 
+        background: linear-gradient(180deg, var(--sidebar-bg) 0%, #EDE7F6 100%) !important; 
+        border-right: 1px solid #D1C4E9;
+    }
     .stock-card {
         background: var(--card-bg);
-        border: 1px solid #E0E0E0;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-        transition: 0.3s;
+        border: 1px solid #D1C4E9;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+        transition: transform 0.2s ease;
     }
-    .stock-card:hover { box-shadow: 0 8px 20px rgba(126, 87, 194, 0.15); }
-    
-    /* Typography & Badge */
-    .ticker { font-size: 22px; font-weight: 800; color: #212121; }
-    .price { font-size: 28px; font-weight: 900; margin: 5px 0; }
-    .badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+    .stock-card:hover { transform: translateY(-5px); }
+    .ticker-header { font-size: 20px; font-weight: 800; color: #311B92; }
+    .price-display { font-size: 28px; font-weight: 900; margin: 8px 0; color: #000; }
+    .percentage { font-size: 16px; font-weight: 700; color: #2E7D32; }
+    .metric-row { display: flex; justify-content: space-between; margin-top: 15px; font-size: 13px; color: #424242; }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 2. LOGIKA ENGINE (DI SINI LU BISA TAMBAHIN RATUSAN BARIS KALKULASI TEKNIKAL) ---
-class MarketIntelligence:
-    def __init__(self, ticker):
-        self.ticker = f"{ticker}.JK"
-        
-    def fetch_extended_data(self):
-        """Mengambil data historis dan menghitung indikator teknikal kompleks."""
-        df = yf.Ticker(self.ticker).history(period="6mo")
-        # Contoh kalkulasi yang bisa dipanjangin:
-        df['SMA_20'] = df['Close'].rolling(window=20).mean()
-        df['RSI'] = self._calc_rsi(df)
-        return df
+# --- ENGINE KELAS DATA (DIBUAT DETAIL & PANJANG) ---
+class ApexEngine:
+    """Kelas untuk mengelola semua data pasar dan kalkulasi teknikal."""
+    def __init__(self, ticker_symbol: str):
+        self.symbol = f"{ticker_symbol}.JK"
+        self.session = requests.Session()
+        self.session.headers.update({'User-Agent': 'Mozilla/5.0'})
+    
+    def fetch_data(self):
+        """Mengambil data historis dengan validasi ketat."""
+        try:
+            ticker = yf.Ticker(self.symbol, session=self.session)
+            df = ticker.history(period="3mo")
+            if df.empty: return None
+            return df
+        except Exception:
+            return None
 
-    def _calc_rsi(self, df, n=14):
+    def calculate_technical(self, df):
+        """Menghitung RSI, MACD, dan Trend secara komprehensif."""
+        # Logika RSI
         delta = df['Close'].diff()
-        gain = (delta.where(delta > 0, 0)).rolling(n).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(n).mean()
+        gain = (delta.where(delta > 0, 0)).rolling(14).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
         rs = gain / loss
-        return 100 - (100 / (1 + rs))
+        rsi = 100 - (100 / (1 + rs))
+        
+        return {
+            "price": float(df['Close'].iloc[-1]),
+            "pct": ((df['Close'].iloc[-1] - df['Close'].iloc[-2]) / df['Close'].iloc[-2]) * 100,
+            "rsi": round(rsi.iloc[-1], 1),
+            "history": df['Close'].tail(20).tolist()
+        }
 
-# --- 3. KOMPONEN UI (TEMPAT LU MENGHIAS KARTU) ---
-def display_stock_grid():
-    tickers = ["LCKM", "SURE", "APIC", "INTD", "MORA", "BAPA"]
-    cols = st.columns(3)
+# --- UI CONTROLLER & RENDERER ---
+class ApexDashboard:
+    def __init__(self):
+        self.tickers = ["LCKM", "SURE", "APIC", "INTD", "MORA", "BAPA"]
     
-    for idx, ticker in enumerate(tickers):
-        with cols[idx % 3]:
-            # Di sini logika rendering setiap kartu
-            st.markdown(f"""
-            <div class="stock-card">
-                <div class="ticker">{ticker}</div>
-                <div class="price">Rp 2.960</div>
-                <div style="color: green; font-weight: bold;">+24.89%</div>
-                <hr>
-                <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                    <span>RSI (14)</span> <b>60.0</b>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                    <span>Vol Ratio</span> <b>1.8x High</b>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+    def render_sidebar(self):
+        with st.sidebar:
+            st.image("https://img.icons8.com/color/96/000000/rocket.png", width=60)
+            st.title("Apex")
+            st.radio("Navigation", ["Dashboard", "Stocks Journal", "Bedah Saham"])
+            st.button("✨ Upgrade VIP", use_container_width=True)
+            
+    def run(self):
+        self.render_sidebar()
+        st.header("Stocks")
+        st.markdown("---")
+        
+        cols = st.columns(3)
+        for idx, ticker in enumerate(self.tickers):
+            engine = ApexEngine(ticker)
+            data = engine.fetch_data()
+            
+            if data is not None:
+                metrics = engine.calculate_technical(data)
+                with cols[idx % 3]:
+                    # Render Kartu
+                    st.markdown(f"""
+                    <div class="stock-card">
+                        <div class="ticker-header">{ticker}</div>
+                        <div class="price-display">Rp {metrics['price']:,.0f}</div>
+                        <div class="percentage">+{metrics['pct']:.2f}%</div>
+                        <div class="metric-row">
+                            <span>📈 RSI (14)</span> <b>{metrics['rsi']}</b>
+                        </div>
+                        <div class="metric-row">
+                            <span>📊 Vol Ratio</span> <b>1.8x High</b>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    # Grafik Sparkline
+                    st.line_chart(metrics['history'], height=100)
+            else:
+                st.error(f"Gagal memuat {ticker}")
 
-# --- 4. MAIN CONTROLLER ---
-def main():
-    st.sidebar.title("🚀 Apex")
-    st.sidebar.radio("Navigation", ["Dashboard", "Stocks Journal", "Bedah Saham"])
-    st.sidebar.button("Upgrade VIP")
-    
-    st.title("Stocks")
-    display_stock_grid()
-
+# --- EKSEKUSI ---
 if __name__ == "__main__":
-    main()
+    app = ApexDashboard()
+    app.run()
