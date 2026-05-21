@@ -3,7 +3,6 @@ from engine_data import StockAnalyzer
 from components import UIComponent
 from styles import inject_custom_css
 
-# Inisialisasi sistem
 st.set_page_config(page_title="Renno Stocks Pro", layout="wide")
 inject_custom_css()
 
@@ -17,7 +16,6 @@ class DashboardApp:
         
         cols = st.columns(3)
         for idx, t in enumerate(self.tickers):
-            # Logika panjang untuk setiap komponen
             engine = StockAnalyzer(t)
             data = engine.fetch_market_data()
             
