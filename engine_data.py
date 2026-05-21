@@ -1,17 +1,34 @@
 import yfinance as yf
-import requests
+import pandas as pd
+import numpy as np
 
-# Pastikan nama fungsinya adalah 'get_stock_metrics'
-def get_stock_metrics(ticker):
+def calculate_rsi(data, period=14):
+    delta = data['Close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    rs = gain / loss
+    return 100 - (100 / (1 + rs))
+
+def get_technical_data(ticker_symbol):
     try:
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        session = requests.Session()
-        stock = yf.Ticker(f"{ticker}.JK", session=session)
-        hist = stock.history(period="5d")
-        if hist.empty: return {"price": 0, "pct": 0, "error": "No Data"}
-        curr = float(hist['Close'].iloc[-1])
-        prev = float(hist['Close'].iloc[-2])
-        chg = ((curr - prev) / prev) * 100
-        return {"price": curr, "pct": chg, "error": None}
-    except Exception as e:
-        return {"price": 0, "pct": 0, "error": str(e)}
+        df = yf.Ticker(f"{ticker_symbol}.JK").history(period="3mo")
+        if df.empty: return None
+        
+        # RSI
+        rsi = calculate_rsi(df).iloc[-1]
+        
+        # MACD (12, 26, 9)
+        exp1 = df['Close'].ewm(span=12, adjust=False).mean()
+        exp2 = df['Close'].ewm(span=26, adjust=False).mean()
+        macd = exp1 - exp2
+        signal = macd.ewm(span=9, adjust=False).mean()
+        macd_status = "Bullish" if macd.iloc[-1] > signal.iloc[-1] else "Bearish"
+        
+        return {
+            "price": float(df['Close'].iloc[-1]),
+            "pct": ((df['Close'].iloc[-1] - df['Close'].iloc[-2]) / df['Close'].iloc[-2]) * 100,
+            "rsi": round(rsi, 1),
+            "macd": macd_status,
+            "history": df['Close'].tail(15).tolist() # Untuk grafik kecil
+        }
+    except: return None
