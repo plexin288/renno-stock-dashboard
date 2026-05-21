@@ -41,15 +41,23 @@ header {
     display: none;
 }
 
-[data-testid="collapsedControl"] {
+section[data-testid="stSidebar"] {
+    background: rgba(255,255,255,0.98) !important;
+    border-right: 1px solid #E5E7EB !important;
+
+    min-width: 280px !important;
+    max-width: 280px !important;
+    width: 280px !important;
+
     display: block !important;
-    z-index: 99999 !important;
+    visibility: visible !important;
+    overflow: visible !important;
+
+    z-index: 999999 !important;
 }
 
-section[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.95);
-    border-right: 1px solid #E5E7EB;
-    z-index: 999999 !important;
+section[data-testid="stSidebar"] > div {
+    width: 280px !important;
 }
 
 .card {
