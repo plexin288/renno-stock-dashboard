@@ -1,8 +1,6 @@
 streamlit
-yfinance
+streamlit-option-menu
 plotly
 pandas
-ta
-streamlit-option-menu
-feedparser
-requests
+numpy
+yfinance
