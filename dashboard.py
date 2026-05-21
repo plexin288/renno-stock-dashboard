@@ -246,32 +246,46 @@ with left:
     </div>
     """, unsafe_allow_html=True)
 
-    # DUMMY CHART
-    np.random.seed(1)
-    dates = pd.date_range(start="2025-01-01", periods=80)
-    prices = np.cumsum(np.random.randn(80)) + 100
+    # =========================
+# TRADINGVIEW CHART
+# =========================
 
-    fig = go.Figure()
+tradingview_widget = """
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div id="tradingview_chart"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
-    fig.add_trace(go.Scatter(
-        x=dates,
-        y=prices,
-        mode='lines',
-        line=dict(color='#8B5CF6', width=3),
-        fill='tozeroy'
-    ))
+  <script type="text/javascript">
+  new TradingView.widget(
+  {
+    "width": "100%",
+    "height": 600,
+    "symbol": "IDX:BBCA",
+    "interval": "D",
+    "timezone": "Asia/Jakarta",
+    "theme": "light",
+    "style": "1",
+    "locale": "id",
+    "toolbar_bg": "#F8F7FF",
+    "enable_publishing": false,
+    "allow_symbol_change": true,
+    "container_id": "tradingview_chart",
+    "hide_top_toolbar": false,
+    "hide_legend": false,
+    "save_image": false,
+    "studies": [
+      "MASimple@tv-basicstudies",
+      "Volume@tv-basicstudies"
+    ]
+  }
+  );
+  </script>
+</div>
+<!-- TradingView Widget END -->
+"""
 
-    fig.update_layout(
-        height=500,
-        paper_bgcolor='white',
-        plot_bgcolor='white',
-        margin=dict(l=10,r=10,t=10,b=10),
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor='#F3F4F6'),
-        font=dict(color='#111827')
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
+st.components.v1.html(tradingview_widget, height=620)
 
     c1,c2,c3 = st.columns(3)
 
